@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components/macro"
 
 export const Wrapper = styled.footer`
     grid-area: now-playing-bar;
@@ -37,9 +37,16 @@ export const Container = styled.div`
 export const Content = styled.div`
     display: flex;
     flex-direction: column;
-    p {
+    p, a {
         font-size: 15px;
         color: rgba(255, 255, 255, 0.9);
+    }
+    a {
+        text-decoration: none;
+        font-weight: 500;
+        &:hover {
+            text-decoration: underline;
+        }
     }
     .s_u {
         margin-top: 2px;

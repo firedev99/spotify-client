@@ -20,7 +20,6 @@ function App() {
 
   useEffect(() => {
     const { accessToken, error } = getHashParams(window && window.location.hash);
-    const cancelSource = axios.CancelToken.source();
 
     if (error) {
       setLoading(false);
@@ -32,8 +31,8 @@ function App() {
         window.location.hash = '';
 
         const makeRequest = async () => {
-          const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', accessToken, cancelSource);
-          const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', accessToken, cancelSource)
+          const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', accessToken);
+          const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', accessToken)
           try {
             const [_userInfo, _userPlaylists] = await Promise.all([reqUserInfo(), reqUserPlaylists()]);
             setUserInfo(_userInfo.data);
@@ -53,8 +52,8 @@ function App() {
           setAuth(true);
 
           const makeRequest = async () => {
-            const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', access_token, cancelSource);
-            const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', access_token, cancelSource)
+            const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', access_token);
+            const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', access_token)
 
             try {
               const [_userInfo, _userPlaylists] = await Promise.all([reqUserInfo(), reqUserPlaylists()]);

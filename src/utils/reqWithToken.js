@@ -1,13 +1,15 @@
 import axios from 'axios'
 
-const reqWithToken = (endpoint, access_token, cancelSource) => {
+const reqWithToken = (endpoint, access_token) => {
+    let source = axios.CancelToken.source();
+
     const request = async () => {
         let result
         const options = {
             url: endpoint,
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + access_token },
-            cancelToken: cancelSource.token
+            cancelToken: source.token
         };
         try {
             result = await axios(options)

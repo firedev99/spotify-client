@@ -9,8 +9,7 @@ import { Wrapper, Container, Banner, NavItems, NavRoot, ClientInfo, CreatePlayli
 
 export default function Sidebar() {
     const auth = useContext(LoginContext);
-    const playlists = useContext(PlaylistContext);
-    const { items } = playlists;
+    const { items } = useContext(PlaylistContext);
 
     return (
         <Wrapper>

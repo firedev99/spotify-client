@@ -16,8 +16,8 @@ export default function Header() {
     const [toggle, setToggle] = useState(false);
 
     const auth = useContext(LoginContext);
-    const user = useContext(UserContext);
-    const { country, display_name, images, id } = user;
+    const { country, display_name, images, id } = useContext(UserContext);
+
 
     const escKey = useKeypress('Escape');
     useOnclickOutside(menuRef, () => setToggle(false));

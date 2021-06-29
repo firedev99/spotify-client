@@ -8,9 +8,9 @@ export const Wrapper = styled.header`
     align-items: center;
     justify-content: space-between;
     position: sticky;
+    top: 0;
     padding: 16px;
     user-select: none;
-    /* width: calc(100% - (156px + 6vw)); */
     
 `;
 
