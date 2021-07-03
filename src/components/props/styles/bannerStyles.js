@@ -2,7 +2,6 @@ import styled from "styled-components/macro"
 export const Wrapper = styled.section`
     height: 100%;
     width: 100%;
-    margin-top: 58px;
     position: relative;
 `;
 export const Container = styled.div`

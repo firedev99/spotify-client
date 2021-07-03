@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from "prop-types"
 // components
 import Sidebar from '../sidebar'
 import Footer from "../footer"
-import Header from "../header"
+import Player from "../player"
 // styled-components
 import GlobalStyles from '../../globalStyles'
 import { Wrapper, MainView } from "./styles/layoutStyles"
+import { LoginContext } from '../../utils/context';
 
 export default function Layout({ children }) {
+    const auth = useContext(LoginContext);
 
     return (
         <>
@@ -16,12 +18,11 @@ export default function Layout({ children }) {
             <Wrapper>
                 <Sidebar />
                 <MainView>
-                    {/* <Header /> */}
                     <main>
                         {children}
                     </main>
                 </MainView>
-                <Footer />
+                {auth ? <Player /> : <Footer />}
             </Wrapper>
         </>
     )

@@ -2,13 +2,12 @@ import styled from "styled-components/macro"
 
 export const Wrapper = styled.footer`
     grid-area: now-playing-bar;
-    background-color: yellow;
     width: 100%;
 `;
 
 export const Container = styled.div`
     padding: 0 32px;
-    height: 82px;
+    height: 90px;
     background-image: linear-gradient(90deg ,#af2896, #509bf5);
     background-image: -webkit-gradient(linear, left, top, right, top, from(#af2896, #509bf5));
     display: flex;

@@ -4,9 +4,10 @@ import { minutesAndSeconds } from "../../utils/getTime"
 import { Wrapper } from './styles/trackListStyles'
 // icons
 import { ClockIcon, PlayIcon } from '../../helpers/icons'
+// hooks
 
 export default function TrackList({ songs }) {
-    console.log(songs)
+
     return (
         <Wrapper>
             <ol>

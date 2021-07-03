@@ -11,7 +11,7 @@ import { ChevronDownIcon } from "../../helpers/icons";
 // styled-components
 import { Wrapper, LocationNavigators, Navigations, UserNavigators, DisplayPicture } from "./styles/headerStyles";
 
-export default function Header({ bg = 'transperant' }) {
+export default function Header({ bg = 'transperant', position = 'relative' }) {
     const menuRef = useRef(null);
     const [toggle, setToggle] = useState(false);
 
@@ -28,7 +28,7 @@ export default function Header({ bg = 'transperant' }) {
     }, [escKey])
 
     return (
-        <Wrapper style={{ background: bg }}>
+        <Wrapper style={{ background: bg, position }}>
             <LocationNavigators />
             {auth ? (
                 <UserNavigators ref={menuRef} style={{ backgroundColor: toggle && `rgba(179, 179, 179, 0.15)` }} onClick={() => setToggle(!toggle)}>

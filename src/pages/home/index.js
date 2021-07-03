@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 // components
 import Header from "../../components/header"
 import StretchFrame from '../../components/props/stretchFrame'
@@ -6,7 +6,6 @@ import CategoryContainer from '../../components/props/categoryContainer'
 import Frame from '../../components/props/frame'
 // hooks
 import { useDimesions } from "../../hooks/useDimesions"
-import { useSticky } from "../../hooks/useSticky"
 // context
 import { LoginContext, PlaylistContext, TokenContext, UserContext } from "../../utils/context"
 // utils 
@@ -51,7 +50,7 @@ export default function HomePage() {
     }, [auth, spotifyToken, locale, country])
     return (
         <Wrapper>
-            <Header />
+            <Header position="absolute" />
             <Container>
                 <Top ref={topRef}>
                     {auth ? (

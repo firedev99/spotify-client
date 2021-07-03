@@ -216,8 +216,10 @@ export const SpotifyApp = styled.div`
     height: 38px;
     display: flex;
     align-items: center;
-    margin-bottom: -12px;
+    margin-bottom: -4px;
     svg {
+        width: 22px;
+        height: 22px;
         margin-right: 4px;
         fill: rgba(179, 179, 179, 0.85);
     }
@@ -226,7 +228,8 @@ export const SpotifyApp = styled.div`
         align-items: center;
         color: rgba(179, 179, 179, 0.85);
         text-decoration: none;
-        font-size: 14px;
+        font-size: 13px;
+        font-weight: 500;
     }
     &:hover {
         a {

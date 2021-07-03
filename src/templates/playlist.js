@@ -17,10 +17,10 @@ export default function PlaylistTemplate({ match }) {
     const auth = useContext(LoginContext);
     const spotifyToken = useContext(TokenContext);
 
+    const [color, setColor] = useState('');
     const [playlistInfo, setPlaylistInfo] = useState([]);
     const [songs, setSongs] = useState([]);
-    const [color, setColor] = useState('');
-    console.log(songs.length);
+
     const total_duration = songs.reduce((sum, { duration_ms }) => sum + duration_ms, 0);
 
     // console.log(playlistInfo);

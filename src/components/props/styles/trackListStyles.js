@@ -6,7 +6,6 @@ export const Wrapper = styled.div`
     position: relative;
     z-index: 5;
     user-select: none;
-    margin-bottom: 86px;
     ol {
         li {
             list-style: none;
@@ -17,7 +16,6 @@ export const Wrapper = styled.div`
             margin: 4px 0;
             transition: all 0.25s; 
             .index {
-                /* place-self: center; */
                 display: flex;
                 align-items: center;
                 .icon {
