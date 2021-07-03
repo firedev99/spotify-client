@@ -182,6 +182,7 @@ export const UserPlaylists = styled.div`
     flex-direction: column;
     overflow-y: auto;
     padding-left: 2px;
+    padding-right: 12px;
     .spread {
         padding: 6px 0;
         .active {

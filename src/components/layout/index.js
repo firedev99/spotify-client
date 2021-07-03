@@ -1,21 +1,22 @@
 import React from 'react';
-import PropTypes from "prop-types";
+import PropTypes from "prop-types"
 // components
-import Sidebar from '../sidebar';
-import Footer from "../footer";
-import Header from "../header";
+import Sidebar from '../sidebar'
+import Footer from "../footer"
+import Header from "../header"
 // styled-components
-import GlobalStyles from '../../globalStyles';
-import { Wrapper, MainView } from "./styles/layoutStyles";
+import GlobalStyles from '../../globalStyles'
+import { Wrapper, MainView } from "./styles/layoutStyles"
 
 export default function Layout({ children }) {
+
     return (
         <>
             <GlobalStyles />
             <Wrapper>
                 <Sidebar />
                 <MainView>
-                    <Header />
+                    {/* <Header /> */}
                     <main>
                         {children}
                     </main>

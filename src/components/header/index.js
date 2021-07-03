@@ -11,13 +11,12 @@ import { ChevronDownIcon } from "../../helpers/icons";
 // styled-components
 import { Wrapper, LocationNavigators, Navigations, UserNavigators, DisplayPicture } from "./styles/headerStyles";
 
-export default function Header() {
+export default function Header({ bg = 'transperant' }) {
     const menuRef = useRef(null);
     const [toggle, setToggle] = useState(false);
 
     const auth = useContext(LoginContext);
     const { country, display_name, images, id } = useContext(UserContext);
-
 
     const escKey = useKeypress('Escape');
     useOnclickOutside(menuRef, () => setToggle(false));
@@ -29,16 +28,16 @@ export default function Header() {
     }, [escKey])
 
     return (
-        <Wrapper>
+        <Wrapper style={{ background: bg }}>
             <LocationNavigators />
             {auth ? (
                 <UserNavigators ref={menuRef} style={{ backgroundColor: toggle && `rgba(179, 179, 179, 0.15)` }} onClick={() => setToggle(!toggle)}>
                     <DisplayPicture>
-                        <img src={images && images[0].url} alt={`user-dp`} />
+                        <img src={images && images[0].url} alt='user-dp' loading="eager" />
                     </DisplayPicture>
                     <span>{display_name}</span>
                     <ChevronDownIcon />
-                    {toggle && (<UserMenu userID={id} country={country} />)}
+                    {toggle && (<UserMenu userID={id} country={country && country} />)}
                 </UserNavigators>
             ) : (
                 <Navigations>

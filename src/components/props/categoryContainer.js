@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import styled from 'styled-components/macro'
 // components
 import Frame from './frame'
 // context
@@ -8,26 +7,8 @@ import { LoginContext, TokenContext } from '../../utils/context'
 import reqWithToken from '../../utils/reqWithToken'
 // hooks
 import { useDimesions } from "../../hooks/useDimesions"
-
-const Container = styled.div`
-    width: 100%;
-    min-height: 256px;
-    margin-bottom: 16px;
-    h3 {
-        font-size: 24px !important;
-    }
-    p {
-        font-size: 14px;
-    }
-`;
-
-const SectionWrapper = styled.div`
-    display: grid;
-    width: 100%;
-    height: 100%;
-    grid-template-columns: repeat(6, minmax(156px, 1fr));
-    column-gap: 24px;
-`;
+// styled-components
+import { Container, SectionWrapper } from './styles/categoryContainerStyles'
 
 export default function CategoryContainer({ title = "FireyBoi", tag, id, country = "US", children }) {
     const auth = useContext(LoginContext);
@@ -67,7 +48,7 @@ export default function CategoryContainer({ title = "FireyBoi", tag, id, country
             {auth && (
                 <SectionWrapper ref={sectionsRef} style={{ marginTop: "12px", gridTemplateColumns: dimensions.width < 1206 ? `repeat(${Math.ceil(dimensions.width / 220)}, minmax(0, 1fr)` : `repeat(6, minmax(0, 1fr)` }}>
                     {tracks && tracks.filter((playlist, index) => (dimensions.width < 1206 ? (index < Math.ceil(dimensions.width / 220)) : (index < 6))).map((playlist, index) => (
-                        <Frame playlist={playlist} key={`playlist-${playlist.id}`} />
+                        <Frame items={playlist} key={`playlist-${playlist.id}`} />
                     ))}
                 </SectionWrapper>
             )}

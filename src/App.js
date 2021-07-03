@@ -3,6 +3,8 @@ import { Route } from "react-router-dom";
 import axios from "axios";
 // pages
 import { HomePage, SearchPage } from "./pages";
+// templates
+import { PlaylistTemplate } from './templates'
 // components
 import Layout from "./components/layout";
 // utils
@@ -82,6 +84,7 @@ function App() {
               <Layout>
                 <Route path='/' exact component={HomePage} />
                 <Route path='/search' component={SearchPage} />
+                <Route path="/playlist/:id" component={PlaylistTemplate} />
               </Layout>
             </PlaylistContext.Provider>
           </UserContext.Provider>

@@ -14,7 +14,7 @@ export default function useOnclickOutside(ref, handler) {
         window.addEventListener("mousedown", listener);
         window.addEventListener("touchstart", listener);
 
-        return () => {
+        return _ => {
             window.removeEventListener("mousedown", listener);
             window.removeEventListener("touchstart", listener);
         };

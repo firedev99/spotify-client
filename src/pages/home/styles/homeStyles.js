@@ -1,17 +1,16 @@
 import styled from "styled-components/macro";
 
 export const Wrapper = styled.div`
-    height: 100%;
-    max-height: calc(100vh - 138px);
+    height: 100vh;
+    max-height: calc(100vh - 82px);
     width: 100%;
     background-image: linear-gradient(rgba(0,0,0,.6) 0,#121212 100%);
-    overflow: hidden;
-    overflow-y: auto;
     user-select: none;
+    overflow-y: auto;
 `;
 
 export const Container = styled.div`
-    padding: 32px;
+    padding: 72px 32px 32px 32px;
     width: 100%;
     h3 {
         font-size: 32px;
@@ -30,7 +29,6 @@ export const TopInner = styled.div`
     height: 100%;
     width: 100%;
     display: grid;
-    /* grid-template-columns: repeat(4, minmax(224px, 1fr)); */
     column-gap: 24px;
     row-gap: 16px;
 `;

@@ -8,7 +8,6 @@ const GlobalStyles = createGlobalStyle`
     }
     ::-webkit-scrollbar {
         width: 13px;
-        z-index: 0;
     }
     /* Track */
     ::-webkit-scrollbar-track {
@@ -29,9 +28,12 @@ const GlobalStyles = createGlobalStyle`
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         overflow-x: hidden;
+        scroll-behavior: smooth;
         font-family: "Poppins", sans-serif;
         font-weight: 400;
         color: #b3b3b3;
+        height: 100%;
+        width: 100%;
     }
 `;
 

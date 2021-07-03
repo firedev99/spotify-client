@@ -16,11 +16,11 @@ export const Wrapper = styled.div`
 export const MainView = styled.div`
     position: relative;
     background-image: linear-gradient(rgba(0,0,0,.75) 0,#121212 100%);
+    height: 100%;
     width: 100%;
     grid-area: main-view;
     display: flex;
     flex-direction: column;
-    overflow-y: hidden;
     main {
         display: flex;
         flex: 1;

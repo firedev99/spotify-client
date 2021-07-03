@@ -15,7 +15,6 @@ const Container = styled.div`
     background-color: #282828;
     border-radius: 4px;
     box-shadow: 0 16px 24px rgba(0, 0, 0, 0.3);
-    position: absolute;
     ul {
         list-style: none;
         li {

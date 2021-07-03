@@ -1,17 +1,19 @@
 import styled from "styled-components/macro";
 
 export const Wrapper = styled.header`
-    background: rgba(18, 18, 18, 1);
+    /* background: rgba(18, 18, 18, 1); */
+    /* background: #121212; */
     height: 58px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: sticky;
+    position: absolute;
+    /* position: sticky; */
+    z-index: 50;
     top: 0;
     padding: 16px;
     user-select: none;
-    
 `;
 
 export const Navigations = styled.div`
@@ -53,7 +55,6 @@ export const UserNavigators = styled.div`
     justify-content: space-between;
     padding: 4px 6px;
     width: 112px;
-    background-color: rgba(0, 0, 0, 0.9);
     border-radius: 20px;
     transition: all 0.3s;
     svg {
