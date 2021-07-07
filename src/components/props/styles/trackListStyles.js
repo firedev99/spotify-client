@@ -18,14 +18,19 @@ export const Wrapper = styled.div`
             .index {
                 display: flex;
                 align-items: center;
+                .icon_single {
+                    margin-left: -4px;
+                }
+                .icon_double {
+                    margin-left: -2px;
+                }
                 .icon {
                     display: none;
-                    align-items: center;
-                    margin: 4px 0 0 -4px;
                     transition: all 0.25s;
+                    margin-top: 8px;
                     svg {
-                        width: 20px;
-                        height: 20px;
+                        width: 18px;
+                        height: 18px;
                     }
                 }
             }

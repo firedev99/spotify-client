@@ -54,16 +54,18 @@ function App() {
           setAuth(true);
 
           const makeRequest = async () => {
-            const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', access_token);
-            const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', access_token)
+            if (access_token) {
+              const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', access_token);
+              const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', access_token)
 
-            try {
-              const [_userInfo, _userPlaylists] = await Promise.all([reqUserInfo(), reqUserPlaylists()]);
+              try {
+                const [_userInfo, _userPlaylists] = await Promise.all([reqUserInfo(), reqUserPlaylists()]);
 
-              setUserInfo(_userInfo.data);
-              setPlaylists(_userPlaylists.data)
-            } catch (error) {
-              console.log(error);
+                setUserInfo(_userInfo.data);
+                setPlaylists(_userPlaylists.data)
+              } catch (error) {
+                console.log(error);
+              }
             }
           }
 

@@ -16,7 +16,7 @@ export default function Header({ bg = 'transperant', position = 'relative' }) {
     const [toggle, setToggle] = useState(false);
 
     const auth = useContext(LoginContext);
-    const { country, display_name, images, id } = useContext(UserContext);
+    const user = useContext(UserContext);
 
     const escKey = useKeypress('Escape');
     useOnclickOutside(menuRef, () => setToggle(false));
@@ -33,11 +33,11 @@ export default function Header({ bg = 'transperant', position = 'relative' }) {
             {auth ? (
                 <UserNavigators ref={menuRef} style={{ backgroundColor: toggle && `rgba(179, 179, 179, 0.15)` }} onClick={() => setToggle(!toggle)}>
                     <DisplayPicture>
-                        <img src={images && images[0].url} alt='user-dp' loading="eager" />
+                        <img src={user && user.images && user.images[0].url} alt='user-dp' loading="eager" />
                     </DisplayPicture>
-                    <span>{display_name}</span>
+                    <span>{user && user.display_name}</span>
                     <ChevronDownIcon />
-                    {toggle && (<UserMenu userID={id} country={country && country} />)}
+                    {toggle && (<UserMenu userID={user && user.id} country={user && user.country} />)}
                 </UserNavigators>
             ) : (
                 <Navigations>

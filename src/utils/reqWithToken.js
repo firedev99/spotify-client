@@ -12,7 +12,7 @@ const reqWithToken = (endpoint, access_token) => {
             cancelToken: source.token
         };
         try {
-            result = await axios(options)
+            result = await axios(options);
         } catch (err) {
             if (axios.isCancel(err)) return
             return err;
@@ -23,4 +23,4 @@ const reqWithToken = (endpoint, access_token) => {
     return request
 }
 
-export default reqWithToken
+export default reqWithToken;

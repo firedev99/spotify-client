@@ -32,6 +32,14 @@ export const AudioPlayer = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
+    .player_progress_bar {
+        width: 100%;
+        max-width: 524px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        user-select: none;
+    }
     .player_controls {
         display: flex;
         align-items: center;
@@ -65,6 +73,7 @@ export const AudioPlayer = styled.div`
                 svg {
                     width: 17px;
                     height: 17px;
+                    fill: black;
                 }
             }
         }

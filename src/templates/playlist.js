@@ -21,9 +21,8 @@ export default function PlaylistTemplate({ match }) {
     const [playlistInfo, setPlaylistInfo] = useState([]);
     const [songs, setSongs] = useState([]);
 
-    const total_duration = songs.reduce((sum, { duration_ms }) => sum + duration_ms, 0);
+    const total_duration = songs && songs.reduce((sum, { duration_ms }) => sum + duration_ms, 0);
 
-    // console.log(playlistInfo);
     useEffect(() => {
         setColor(randomColor());
     }, [])
@@ -33,7 +32,6 @@ export default function PlaylistTemplate({ match }) {
         if (auth) {
             const getPlaylistItems = async () => {
                 const reqPlaylistItems = reqWithToken(`https://api.spotify.com/v1/playlists/${id}`, spotifyToken);
-
                 try {
                     const { data } = await reqPlaylistItems();
                     if (data) {
@@ -49,6 +47,7 @@ export default function PlaylistTemplate({ match }) {
             getPlaylistItems();
         }
     }, [id, spotifyToken, auth])
+
     return (
         <Wrapper>
             <Header bg={color} />

@@ -15,7 +15,6 @@ export default function CategoryContainer({ title = "FireyBoi", tag, id, country
     const spotifyToken = useContext(TokenContext);
     const [playlists, setPlaylists] = useState([]);
     const { items: tracks } = playlists;
-
     const [sectionsRef, dimensions] = useDimesions();
 
     useEffect(() => {
@@ -47,7 +46,7 @@ export default function CategoryContainer({ title = "FireyBoi", tag, id, country
             {tag && <p>{tag}</p>}
             {auth && (
                 <SectionWrapper ref={sectionsRef} style={{ marginTop: "12px", gridTemplateColumns: dimensions.width < 1206 ? `repeat(${Math.ceil(dimensions.width / 220)}, minmax(0, 1fr)` : `repeat(6, minmax(0, 1fr)` }}>
-                    {tracks && tracks.filter((playlist, index) => (dimensions.width < 1206 ? (index < Math.ceil(dimensions.width / 220)) : (index < 6))).map((playlist, index) => (
+                    {tracks && tracks !== undefined && tracks.filter((playlist, index) => (dimensions.width < 1206 ? (index < Math.ceil(dimensions.width / 220)) : (index < 6))).map((playlist, index) => (
                         <Frame items={playlist} key={`playlist-${playlist.id}`} />
                     ))}
                 </SectionWrapper>

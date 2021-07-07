@@ -23,7 +23,7 @@ export default function TrackList({ songs }) {
                     <li key={`${items.name}-${index}-track`}>
                         <div className="index">
                             <span className="index_id">{index + 1}</span>
-                            <span className="icon"><PlayIcon /></span>
+                            <span className={`icon ${index < 9 ? `icon_single` : `icon_double`}`}><PlayIcon /></span>
                         </div>
                         <div className="image">
                             <img src={items.album && items.album.images[0].url} alt={`${items.album.name}track-${index}`} loading="lazy" />
