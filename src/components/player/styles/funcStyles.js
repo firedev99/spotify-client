@@ -111,9 +111,30 @@ export const DeviceOptions = styled.div`
                        color: rgba(179, 179, 179, 0.8);
                        font-size: 12px;
                        font-weight: 600;
+                       white-space: nowrap;
                     }
                 }
             }
         }
+    }
+`;
+
+export const VolumeFunc = styled.div`
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    margin-top: 2px;
+    &:hover {
+        svg {
+            color: rgba(255, 255, 255, 0.9);
+        }
+    }
+    svg {
+        transition: all 0.15s;
+        width: 30px;
+        height: 30px;
+        color: rgba(179, 179, 179, 0.9);
+        margin-right: 6px;
     }
 `;

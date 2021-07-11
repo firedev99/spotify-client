@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Route } from "react-router-dom";
 import axios from "axios";
 // pages
-import { HomePage, SearchPage } from "./pages";
+import { HomePage, SearchPage, CollectionTracks } from "./pages";
 // templates
 import { PlaylistTemplate } from './templates'
 // components
@@ -34,7 +34,7 @@ function App() {
 
         const makeRequest = async () => {
           const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', accessToken);
-          const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', accessToken)
+          const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', accessToken);
           try {
             const [_userInfo, _userPlaylists] = await Promise.all([reqUserInfo(), reqUserPlaylists()]);
             setUserInfo(_userInfo.data);
@@ -54,18 +54,16 @@ function App() {
           setAuth(true);
 
           const makeRequest = async () => {
-            if (access_token) {
-              const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', access_token);
-              const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', access_token)
+            const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', access_token);
+            const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', access_token)
 
-              try {
-                const [_userInfo, _userPlaylists] = await Promise.all([reqUserInfo(), reqUserPlaylists()]);
+            try {
+              const [_userInfo, _userPlaylists] = await Promise.all([reqUserInfo(), reqUserPlaylists()]);
 
-                setUserInfo(_userInfo.data);
-                setPlaylists(_userPlaylists.data)
-              } catch (error) {
-                console.log(error);
-              }
+              setUserInfo(_userInfo.data);
+              setPlaylists(_userPlaylists.data)
+            } catch (error) {
+              console.log(error);
             }
           }
 
@@ -87,6 +85,7 @@ function App() {
                 <Route path='/' exact component={HomePage} />
                 <Route path='/search' component={SearchPage} />
                 <Route path="/playlist/:id" component={PlaylistTemplate} />
+                <Route path="/collection/tracks" component={CollectionTracks} />
               </Layout>
             </PlaylistContext.Provider>
           </UserContext.Provider>

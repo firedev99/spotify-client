@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react'
 // components
 import SongStatus from './songStatus'
 import PlayerFunctionality from './playerFunc'
-import Progressbar from '../props/progressBar'
 // context
-import { TokenContext } from "../../utils/context"
+import { TokenContext, TrackContext } from "../../utils/context"
 // utils
 import reqWithToken from "../../utils/reqWithToken"
 import updateWithToken from '../../utils/updateWithToken'
@@ -14,12 +13,13 @@ import { PlayIcon, PauseIcon, ShufflePlayIcon, PreviousPlayIcon, NextPlayIcon, R
 // styled-components
 import { Wrapper, Container, PlayerStatus, AudioPlayer, PlayerControl } from './styles/playerStyles'
 
-export default function Player() {
+function Player({ handleMaximize, isFullScreen }, ref) {
     const spotifyToken = useContext(TokenContext);
+    const { currentTrack, setCurrentTrack } = useContext(TrackContext);
 
-    const [volume, setVolume] = useState(0.5);
+    let fireyPlayer = useRef(null);
+
     const [toggleDevice, setToggleDevice] = useState(false);
-    const [currentTrack, setCurrentTrack] = useState({});
     const [playbackState, setPlaybackState] = useState({
         loading: false,
         play: false,
@@ -28,6 +28,13 @@ export default function Player() {
         progress: 0,
         duration: 0,
     });
+
+    useImperativeHandle(ref, () => ({
+        updateState: () => {
+            setPlaybackState(state => ({ ...state, play: true }));
+            updateState();
+        }
+    }))
 
     // create a new cross browser audio player with spotify webplayback sdk
     const loadScript = () => {
@@ -40,10 +47,11 @@ export default function Player() {
         document.body.appendChild(script);
     };
 
+
     const InitializePlayer = () => {
         console.log("initializing firey spotify 👾");
         let { Player } = window.Spotify;
-        const fireyPlayer = new Player({
+        fireyPlayer = new Player({
             name: "Firey Spotify🔥",
             getOAuthToken: (cb) => {
                 cb(spotifyToken);
@@ -68,7 +76,7 @@ export default function Player() {
                 if (state) {
                     const { duration, loading, paused, position, repeat_mode, shuffle, track_window } = state;
                     const { current_track } = track_window;
-                    setCurrentTrack(current_track);
+                    setCurrentTrack({ ...current_track, play: !paused });
                     setPlaybackState(state => ({
                         ...state,
                         loading: loading,
@@ -77,7 +85,7 @@ export default function Player() {
                         repeat: repeat_mode !== 0,
                         progress: position,
                         duration: duration
-                    }))
+                    }));
                 }
             } catch (error) {
                 console.log(error);
@@ -92,21 +100,26 @@ export default function Player() {
             console.log("Device ID has gone offline", device_id);
         });
         // Connect the player!
-        fireyPlayer.connect();
+        fireyPlayer.connect()
+    };
+
+    const updateState = () => {
+        if (!fireyPlayer.current) {
+            getPlayerInfo();
+        }
     };
 
     // get user's current player device infomations 
-    const getPlayerInfo = async _ => {
+    const getPlayerInfo = _ => {
         console.log('player status');
-        if (typeof spotifyToken !== 'undefined') {
-            const reqInformations = reqWithToken('https://api.spotify.com/v1/me/player', spotifyToken)
+        const reqInformations = reqWithToken('https://api.spotify.com/v1/me/player', spotifyToken)
+        const getFunc = async () => {
             try {
                 const response = await reqInformations();
                 if (response.status === 200) {
                     const { data } = response;
-                    const { device, is_playing, item, progress_ms, repeat_state, shuffle_state } = data;
-                    setVolume(device.volume_percent / 100);
-                    setCurrentTrack(item);
+                    const { is_playing, item, progress_ms, repeat_state, shuffle_state } = data;
+                    setCurrentTrack({ ...item, play: is_playing });
                     setPlaybackState(state => ({
                         ...state,
                         play: is_playing,
@@ -125,7 +138,35 @@ export default function Player() {
                 console.log(error);
             }
         }
+        getFunc();
     };
+
+    // playback func
+    // const playbackFunc = (ratio) => {
+    //     const playback_duration = ratio * playbackState.duration;
+    //     setPlaybackScrub(playback_duration);
+    // };
+
+    // seek position playback
+    // const seekPlaybackPosition = (ratio) => {
+    //     const position_ms = Math.round(ratio * playbackState.duration);
+    //     const requestFunc = updateWithToken(`https://api.spotify.com/v1/me/player/seek?position_ms=${position_ms}`, spotifyToken);
+    //     const seekPosition = async _ => {
+    //         try {
+    //             const response = await requestFunc();
+    //             if (response.status === 204) {
+    //                 setPostionPb(ratio);
+    //                 setPostionPb(state => ({ ...state, progress: position_ms }));
+    //                 updateState();
+    //             }
+    //         } catch (error) {
+    //             console.log(error)
+    //         }
+    //     };
+
+    //     seekPosition();
+    //     setPlaybackScrub(null);
+    // };
 
     // play / resume, pause track
     const toggleMusic = _ => {
@@ -135,6 +176,7 @@ export default function Player() {
                 const response = await request();
                 if (response.status === 204) {
                     setPlaybackState(state => ({ ...state, play: !state.play }))
+                    updateState();
                 } else {
                     console.log('Oops, something went wrong 😔');
                     return;
@@ -228,10 +270,12 @@ export default function Player() {
     useEffect(() => {
         // initialize script
         loadScript();
+        getPlayerInfo();
         window.onSpotifyWebPlaybackSDKReady = () => InitializePlayer();
         // get current state of the player
-        getPlayerInfo();
-
+        return () => {
+            fireyPlayer.disconnect();
+        }
         // eslint-disable-next-line
     }, []);
 
@@ -239,7 +283,7 @@ export default function Player() {
         <Wrapper>
             <Container>
                 <PlayerStatus>
-                    <SongStatus />
+                    <SongStatus currentTrack={currentTrack} setCurrentTrack={setCurrentTrack} />
                 </PlayerStatus>
                 <AudioPlayer>
                     <div className="player_controls">
@@ -255,7 +299,7 @@ export default function Player() {
                         </div>
                         <div onClick={toggleMusic} className="player_play_controls">
                             <button>
-                                {playbackState.play ? <PauseIcon /> : <PlayIcon />}
+                                {playbackState.play && playbackState.loading === false ? <PauseIcon /> : <PlayIcon />}
                             </button>
                         </div>
                         <div className="player_next">
@@ -269,23 +313,31 @@ export default function Player() {
                             </button>
                         </div>
                     </div>
-                    <div className="player_progress_bar">
-                        {/* <div className="remaining_duration">
-                            
-                        </div> */}
-                        <Progressbar />
-                        {/* <div className="total_duration">
-
-                        </div> */}
-                    </div>
+                    {/* <div className="player_progress_bar">
+                        <div className="duration">
+                            {playbackScrub ? minutesAndSeconds(playbackScrub) : minutesAndSeconds(playbackState.progress)}
+                        </div>
+                        <Progressbar
+                            value={positionPb}
+                            setValue={(ratio) => seekPlaybackPosition(ratio)}
+                            func={playbackFunc}
+                        />
+                        <div className="duration">
+                            {minutesAndSeconds(playbackState.duration)}
+                        </div>
+                    </div> */}
                 </AudioPlayer>
                 <PlayerControl>
                     <PlayerFunctionality
                         toggleDevice={toggleDevice}
                         setToggleDevice={setToggleDevice}
+                        handleMaximize={handleMaximize}
+                        isFullScreen={isFullScreen}
                     />
                 </PlayerControl>
             </Container>
         </Wrapper>
     )
 }
+
+export default forwardRef(Player);

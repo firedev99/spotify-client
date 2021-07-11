@@ -6,6 +6,24 @@ export const Wrapper = styled.div`
     height: 12px;
     display: flex;
     align-items: center;
+    .progress_bar_slider {
+        background-color: #fff;
+        border: 0;
+        border-radius: 50%;
+        width: 12px;
+        height: 12px;
+        margin-left: -6px;
+        z-index: 100;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.5);
+        opacity: 0;
+        position: absolute;
+    }
+    .progress_volume {
+        top: -8px;
+    }
+    .progress_bar_slider_engaged {
+        opacity: 1;
+    }
     .progress_bar {
         width: 100%;
         height: 4px;

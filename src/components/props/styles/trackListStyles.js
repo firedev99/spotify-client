@@ -27,8 +27,13 @@ export const Wrapper = styled.div`
                 .icon {
                     display: none;
                     transition: all 0.25s;
-                    margin-top: 8px;
+                    margin-top: 4px;
+                    outline: none;
+                    background: transparent;
+                    border: none;
                     svg {
+                        color: white;
+                        fill: white;
                         width: 18px;
                         height: 18px;
                     }

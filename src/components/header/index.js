@@ -33,7 +33,7 @@ export default function Header({ bg = 'transperant', position = 'relative' }) {
             {auth ? (
                 <UserNavigators ref={menuRef} style={{ backgroundColor: toggle && `rgba(179, 179, 179, 0.15)` }} onClick={() => setToggle(!toggle)}>
                     <DisplayPicture>
-                        <img src={user && user.images && user.images[0].url} alt='user-dp' loading="eager" />
+                        <img src={user && user.images && user.images[0].url} alt='user-dp' />
                     </DisplayPicture>
                     <span>{user && user.display_name}</span>
                     <ChevronDownIcon />

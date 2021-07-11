@@ -1,26 +1,36 @@
-import React, { useContext, useEffect, useState } from 'react'
-// styled-components
-import { Wrapper, DeviceOptions } from "./styles/funcStyles"
+import React, { useContext, useEffect, useRef, useState } from 'react'
+// components
+import Progressbar from "../props/progressBar";
 // utils
 import reqWithToken from '../../utils/reqWithToken'
+import updateWithToken from '../../utils/updateWithToken';
 // icons
 import { DeviceIcon, VolumeIcon, MaximixeIcon, MonitorIcon, SmartPhoneIcon } from '../../helpers/icons'
 // context
 import { TokenContext } from '../../utils/context';
-import updateWithToken from '../../utils/updateWithToken';
+// styled-components
+import { Wrapper, DeviceOptions, VolumeFunc } from "./styles/funcStyles"
+import useOnclickOutside from '../../hooks/useOnclickOutside';
 
-export default function PlayerFunctionality({ toggleDevice = false, setToggleDevice }) {
+export default function PlayerFunctionality({ toggleDevice = false, setToggleDevice, handleMaximize, isFullScreen }) {
     const spotifyToken = useContext(TokenContext);
 
+    const deviceRef = useRef(null);
     const [devices, setDevices] = useState([]);
+    const [volume, setVolume] = useState(0.5);
+
+    useOnclickOutside(deviceRef, () => setToggleDevice(false));
 
     useEffect(() => {
-        if (toggleDevice && typeof spotifyToken !== 'undefined') {
+        if (toggleDevice) {
             const getDeviceInfo = async _ => {
                 const requestFunc = reqWithToken('https://api.spotify.com/v1/me/player/devices', spotifyToken);
                 try {
-                    const { data: { devices } } = await requestFunc();
-                    setDevices(devices)
+                    const response = await requestFunc();
+                    if (response.status === 200) {
+                        let { devices } = response.data;
+                        setDevices(devices)
+                    }
                 } catch (error) {
                     console.log(error)
                 }
@@ -48,8 +58,26 @@ export default function PlayerFunctionality({ toggleDevice = false, setToggleDev
         }
     };
 
+    const handleVolume = (ratio) => {
+        const integer = Math.round(ratio * 100);
+        const seekVolume = async _ => {
+            const requestFunc = updateWithToken(`https://api.spotify.com/v1/me/player/volume?volume_percent=${integer}`, spotifyToken);
+            try {
+                const response = await requestFunc();
+                if (response.status === 204) {
+                    setVolume(ratio);
+                } else {
+                    console.log('Opps, something happend 😶');
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        seekVolume();
+    };
+
     return (
-        <Wrapper active={toggleDevice}>
+        <Wrapper ref={deviceRef} active={toggleDevice}>
             <button onClick={() => setToggleDevice(!toggleDevice)}>
                 <DeviceIcon />
                 {toggleDevice && (
@@ -82,6 +110,13 @@ export default function PlayerFunctionality({ toggleDevice = false, setToggleDev
                         </div>
                     </DeviceOptions>
                 )}
+            </button>
+            <VolumeFunc>
+                <VolumeIcon volume={volume} />
+                <Progressbar value={volume} setValue={(ratio) => handleVolume(ratio)} className="progress_volume" />
+            </VolumeFunc>
+            <button onClick={isFullScreen ? () => document.exitFullscreen() : handleMaximize} className="maximize">
+                <MaximixeIcon />
             </button>
         </Wrapper>
     )

@@ -126,10 +126,18 @@ export const CreatePlaylist = styled.div`
         }
 `;
 export const LikedSongs = styled.div`
+    a {
+        display: flex;
+        text-decoration: none;
+        color: rgba(179, 179, 179, 0.8);
+    }
     ${buttons};
     margin-bottom: 14px;
     padding: 0 16px;
     position: relative;
+    .active {
+        color: rgba(255, 255, 255, 0.9);
+    }
     &:after {
             content: '';
             position: absolute;

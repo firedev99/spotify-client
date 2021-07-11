@@ -31,15 +31,18 @@ export const AudioPlayer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
-    .player_progress_bar {
+    justify-content: center;
+    /* .player_progress_bar {
         width: 100%;
-        max-width: 524px;
+        max-width: 540px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         user-select: none;
-    }
+        .duration {
+            margin: 0 6px;
+        }
+    } */
     .player_controls {
         display: flex;
         align-items: center;

@@ -106,6 +106,7 @@ export const Functionality = styled.div`
             width: 28px;
             height: 28px;
             color: white;
+            fill: rgba(255, 255, 255, 0.9);
         }
         &:hover {
             transform: scale(1.05);

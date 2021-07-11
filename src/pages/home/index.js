@@ -30,21 +30,18 @@ export default function HomePage() {
     const [topRef, dimensions] = useDimesions();
 
     useEffect(() => {
-        if (auth) {
+        if (auth && typeof spotifyToken !== 'undefined') {
             const getBrowserCategories = async () => {
                 const featuredCategories = reqWithToken(`https://api.spotify.com/v1/browse/categories?country=${country}&locale=${locale}&limit=15`, spotifyToken);
                 const featuringPlaylists = reqWithToken(`https://api.spotify.com/v1/browse/featured-playlists?country=${country}&locale=${locale}&limit=4`, spotifyToken);
-
                 try {
                     const [_featuredCategories, _featuringPlaylists] = await Promise.all([featuredCategories(), featuringPlaylists()]);
-
                     setCategories(_featuredCategories.data.categories);
-                    setFeaturedPlaylists(_featuringPlaylists.data.playlists)
+                    setFeaturedPlaylists(_featuringPlaylists.data.playlists);
                 } catch (error) {
-                    console.log(error)
+                    console.error(error);
                 }
             }
-
             getBrowserCategories();
         }
     }, [auth, spotifyToken, locale, country])
@@ -56,11 +53,12 @@ export default function HomePage() {
                     {auth ? (
                         <>
                             <h3>Good evening</h3>
+                            {console.log(items)}
                             <TopInner style={{ gridTemplateColumns: dimensions.width < 1112 ? `repeat(${Math.ceil(dimensions.width / 392)}, minmax(0, 1fr)` : `repeat(4, minmax(0, 1fr)` }}>
-                                {items && items.filter((item, index) => (dimensions.width < 1112 ? (index < Math.ceil(dimensions.width / 392)) : (index < 4))).map((item, index) => (
+                                {items && typeof items !== 'undefined' && items.filter((item, index) => (dimensions.width < 1112 ? (index < Math.ceil(dimensions.width / 392)) : (index < 4))).map((item, index) => (
                                     <StretchFrame key={`my-playlist-${index}`} items={item} />
                                 ))}
-                                {playlistItems && playlistItems.filter((item, index) => (dimensions.width < 1112 ? (index < Math.ceil(dimensions.width / 392)) : (index < 4))).map((item, index) => (
+                                {playlistItems && typeof playlistItems !== 'undefined' && playlistItems.filter((item, index) => (dimensions.width < 1112 ? (index < Math.ceil(dimensions.width / 392)) : (index < 4))).map((item, index) => (
                                     <StretchFrame key={`featured-categories-${index}`} items={item} />
                                 ))}
                             </TopInner>
@@ -74,7 +72,7 @@ export default function HomePage() {
                     )}
                 </Top>
                 <RecommendedSection>
-                    {categoryItems && categoryItems.map(({ id, name, ...item }, index) => (
+                    {categoryItems && typeof categoryItems !== 'undefined' && categoryItems.map(({ id, name, ...item }, index) => (
                         <CategoryContainer key={`recommended-categories-${id}`} title={index === 0 ? `Made for ${user && user.display_name}` : name} item={item} id={id} country={country} />
                     ))}
                 </RecommendedSection>

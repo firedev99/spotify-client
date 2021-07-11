@@ -37,7 +37,7 @@ export default function Sidebar() {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink draggable="false" to="/collection" activeClassName="active">
+                        <NavLink draggable="false" to="/collection/playlists" activeClassName="active">
                             <div className="nav_items">
                                 <CollectionIcon />
                                 <span>Your Library</span>
@@ -56,10 +56,12 @@ export default function Sidebar() {
                     </CreatePlaylist>
                     <LikedSongs>
                         <button>
-                            <div className="rect">
-                                <HeartIcon />
-                            </div>
-                            <span>Liked Songs</span>
+                            <NavLink activeClassName="active" to='/collection/tracks'>
+                                <div className="rect">
+                                    <HeartIcon />
+                                </div>
+                                <span>Liked Songs</span>
+                            </NavLink>
                         </button>
                     </LikedSongs>
                     {auth && (
