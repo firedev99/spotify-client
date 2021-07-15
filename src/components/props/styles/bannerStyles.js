@@ -11,12 +11,16 @@ export const Container = styled.div`
     display: flex;
     align-items: center;
     padding: 0 32px;
+    .artist {
+        border-radius: 50%;
+    }
 `;
 
 export const Poster = styled.div`
     width: 264px;
     height: 232px;
-    box-shadow: 2px 8px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 2px 8px 32px rgba(0, 0, 0, 0.4);
+    
     img {
         width: 100%;
         height: 100%;
@@ -40,18 +44,21 @@ export const PageMeta = styled.div`
         text-transform: uppercase;
         font-weight: 600;
         font-size: 14px;
+        margin-left: 6px;
     }
     .description {
         color: rgba(255, 255, 255, 0.7);
         font-weight: 500;
         font-size: 15px;
+        margin-left: 6px;
     }
     .instance {
         font-size: 15px;
+        margin-left: 6px;
         .owner {
             font-weight: 600;
         }
-        .songs_count, .durations_count {
+        .songs_count, .durations_count, .release {
             font-weight: 500;
             font-size: 14px;
             color: rgba(255, 255, 255, 0.7);

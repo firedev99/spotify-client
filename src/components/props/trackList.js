@@ -1,14 +1,14 @@
 import React, { useContext } from 'react'
-// util
-import { minutesAndSeconds } from "../../utils/getTime"
-import { Wrapper } from './styles/trackListStyles'
 // icons
 import { ClockIcon, PauseIcon, PlayIcon } from '../../helpers/icons'
+// utils
+import { minutesAndSeconds } from "../../utils/getTime"
 import { PlayContext, TokenContext, TrackContext } from '../../utils/context'
 import updateWithToken from '../../utils/updateWithToken'
-// hooks
+// styled-components
+import { Wrapper } from './styles/trackListStyles'
 
-export default function TrackList({ songs, uri }) {
+export default function TrackList({ songs, uri, type = "playlist" }) {
     const spotifyToken = useContext(TokenContext);
     const updatePlayer = useContext(PlayContext);
     const { currentTrack } = useContext(TrackContext);
@@ -19,10 +19,15 @@ export default function TrackList({ songs, uri }) {
         // if no uri is given e.g liked page 
         const notExits = songs.filter(item => item.uri === track_uri);
         const body = {
-            context_uri: uri ? uri : notExits[0].album.uri,
+            context_uri: uri ? uri : notExits[0].album_uri,
             offset: { uri: track_uri }
         }
-        const requestFunc = updateWithToken(`https://api.spotify.com/v1/me/player/play`, spotifyToken, body);
+        const artistTypeBody = {
+            uris: [track_uri]
+        }
+
+        const url = `https://api.spotify.com/v1/me/player/${currentTrack.play && currentTrack.uri === track_uri ? `pause` : `play`}`
+        const requestFunc = updateWithToken(url, spotifyToken, type === "artist" ? artistTypeBody : body);
         const requestMusic = async _ => {
             const response = await requestFunc();
             if (response.status === 204) {
@@ -36,27 +41,29 @@ export default function TrackList({ songs, uri }) {
 
     return (
         <Wrapper>
+            {type === 'artist' && <h3 className="popular">Popular</h3>}
             <ol>
-                <li>
+                <li className={type === 'single' ? `single` : ``}>
                     <span>#</span>
                     <span>Title</span>
-                    <span>Album</span>
+                    {type !== 'single' && <span>Album</span>}
                     <span className="duration">
                         <ClockIcon />
                     </span>
                 </li>
                 {songs && songs.map((items, index) => (
-                    <li key={`${items.name}-${index}-track`}>
+                    <li key={`${items.track_name}-${index}-track`} className={type === 'single' ? `single_item` : ``}>
                         <div className="index">
                             <span className="index_id">{index + 1}</span>
                             <button onClick={() => { playTrack(items.uri) }} className={`icon ${index < 9 ? `icon_single` : `icon_double`}`}>{isPlaying && items.uri === currentTrack.uri ? <PauseIcon /> : <PlayIcon />}</button>
                         </div>
-                        <div className="image">
-                            <img src={items.album && items.album.images[0].url} alt={`${items.album.name}track-${index}`} loading="lazy" />
-                            <span className="name">{items.name}</span>
+                        <div className={type === 'single' ? 'image_single' : 'image'}>
+                            {items.track_image && (<img src={items.track_image} alt={`${items.track_image}.jpg`} loading="lazy" />)}
+                            <span className="name">{items.track_name}</span>
+                            {type === 'single' && <span className="album_artists">{items.artists && items.artists.map(item => item).join(", ")}</span>}
                         </div>
-                        <span className="album_name">{items.album.name}</span>
-                        <span className="duration">{minutesAndSeconds(items.duration_ms)}</span>
+                        {type !== 'single' && <span className="album_artists">{items.artists && items.artists.map(item => item).join(", ")}</span>}
+                        <span className="duration">{minutesAndSeconds(items.duration)}</span>
                     </li>
                 ))}
             </ol>

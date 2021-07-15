@@ -1,9 +1,11 @@
 import React, { useContext, useEffect } from 'react'
 import { NavLink } from "react-router-dom"
+// context
+import { TokenContext, TrackContext } from '../../utils/context'
+// utils
+import reqWithToken from '../../utils/reqWithToken'
 // icons
 import { HeartOutlineIcon } from "../../helpers/icons"
-import { TokenContext, TrackContext } from '../../utils/context'
-import reqWithToken from '../../utils/reqWithToken'
 // styled-components
 import { Wrapper, SongPoster, SongMeta, LikeButton } from "./styles/statusStyles"
 
@@ -38,10 +40,17 @@ export default function SongStatus() {
             </SongPoster>
             <SongMeta>
                 <div className="song_info">
-                    <NavLink to={`/albums/${currentTrack.id}`}>{currentTrack && currentTrack.name}</NavLink>
+                    <NavLink to={`/album/${currentTrack.album && currentTrack.album.uri.split(':')[2]}`}>{currentTrack && currentTrack.name}</NavLink>
                 </div>
                 <div className="artist_info">
-                    <NavLink to="/">{currentTrack.artists && currentTrack.artists.map(artist => artist.name).join(', ')}</NavLink>
+                    {currentTrack.artists && currentTrack.artists.map((item, index) => {
+                        return (
+                            <div className="nav" key={`artist-${item.name}`}>
+                                <NavLink to={`/artist/${item.uri && item.uri.split(':')[2]}`}>{item.name}</NavLink>
+                                <span>{currentTrack.artists.length > 1 && index !== currentTrack.artists.length - 1 && ","}</span>
+                            </div>
+                        )
+                    })}
                 </div>
             </SongMeta>
             <LikeButton>

@@ -6,27 +6,23 @@ import { PlayIcon, HeartOutlineIcon, PauseIcon, HeartIcon } from '../../helpers/
 import { Wrapper, Container, Poster, PageMeta, Overlay, Functionality } from "./styles/bannerStyles"
 
 
-export default function PageBanner({ image, title, description, playContext, songs, duration, children, isPlaying, bg, saved, disabled = false }) {
+export default function PageBanner({ ref, image, title, description, playContext, songs, duration, children, isPlaying, bg, saved, disabled = false, disableHeart = false, type = 'playlist', owner, release }) {
     const { minutes, seconds, hours } = msToTime(duration);
 
-    // async function savedToLibrary() {
-    //     const requestFunc = updateWithToken();
-
-    // }
-
     return (
-        <Wrapper>
+        <Wrapper ref={ref}>
             <Container style={{ background: `${bg}` }}>
-                <Poster>
-                    <img src={image} loading="eager" alt="" />
+                <Poster className={type === 'artist' ? 'artist' : 'banner'}>
+                    <img className={type === 'artist' ? 'artist' : 'banner'} src={image} loading="eager" alt={`${title}.jpg`} />
                 </Poster>
                 <PageMeta>
-                    <span className="type">playlist</span>
+                    {type !== 'artist' && <span className="type">{type}</span>}
                     <h2 style={{ fontSize: title && title.length > 18 ? `46px` : `96px`, lineHeight: title && title.length > 18 ? `64px` : `88px` }}>{title}</h2>
-                    <span className="description">{description}</span>
+                    {duration && <span className="description">{description}</span>}
                     <div className="instance">
-                        <span className="owner">Spotify &#8226; </span>
-                        <span className="songs_count">{`${songs} songs`}</span>
+                        <span className="owner">{owner === 'spotify' ? `Spotify ${String.fromCodePoint(parseInt(8226))} ` : type === 'artist' ? `${owner}` : `${owner} ${String.fromCodePoint(parseInt(8226))} `}</span>
+                        {release && <span className="release">{release.split('-')[0]} &#8226; </span>}
+                        {songs && <span className="songs_count">{`${songs} songs`}</span>}
                         {duration && <span className="durations_count">, {hours === 0 ? `${minutes} min ${seconds} sec` : `${hours} hr ${minutes} min`}</span>}
                     </div>
                 </PageMeta>
@@ -38,9 +34,11 @@ export default function PageBanner({ image, title, description, playContext, son
                         <button className="round" onClick={playContext}>
                             {isPlaying ? <PauseIcon /> : <PlayIcon />}
                         </button>
-                        <button className="like" onClick={() => { }}>
-                            {saved ? <HeartIcon /> : <HeartOutlineIcon />}
-                        </button>
+                        {!disableHeart && (
+                            <button className="like" onClick={() => { }}>
+                                {saved ? <HeartIcon /> : <HeartOutlineIcon />}
+                            </button>
+                        )}
                     </>
                 ) : null}
             </Functionality>

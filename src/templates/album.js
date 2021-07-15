@@ -1,19 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react'
-// components
-import PageBanner from '../components/props/pageBanner'
-import Header from '../components/header'
-import TrackList from '../components/props/trackList'
-// utils
-import reqWithToken from '../utils/reqWithToken'
-import randomColor from '../utils/randomColor'
 // context
-import { LoginContext, PlayContext, PlaylistContext, TokenContext, TrackContext } from '../utils/context'
+import { LoginContext, PlayContext, PlaylistContext, TokenContext, TrackContext } from '../utils/context';
+// utils
+import randomColor from "../utils/randomColor";
+import reqWithToken from '../utils/reqWithToken'
+import updateWithToken from '../utils/updateWithToken';
+// components
+import Header from '../components/header'
+import PageBanner from '../components/props/pageBanner'
+import TrackList from '../components/props/trackList'
 // styled-components
-import { Wrapper } from "./styles/playlistStyles"
-import updateWithToken from '../utils/updateWithToken'
-// hooks
+import { Wrapper } from "./styles/albumStyles"
 
-export default function PlaylistTemplate({ match }) {
+export default function AlbumTemplate({ match }) {
     const { params: { id } } = match;
 
     const auth = useContext(LoginContext);
@@ -23,14 +22,16 @@ export default function PlaylistTemplate({ match }) {
     const { currentTrack } = useContext(TrackContext);
 
     const [bgColor, setBgColor] = useState('');
-    const [songs, setSongs] = useState([]);
-    const [uri, setUri] = useState('');
     const [saved, setSaved] = useState(false);
-    const [playlistInfo, setPlaylistInfo] = useState({
+    const [albumInfo, setAlbumInfo] = useState({
+        type: '',
         name: '',
         cover: '',
-        description: '',
+        artists: '',
+        date: '',
     });
+    const [songs, setSongs] = useState([]);
+    const [uri, setUri] = useState('');
 
     const total_duration = songs && songs.reduce((sum, { duration }) => sum + duration, 0);
     const isPlaying = currentTrack && currentTrack.play === true && songs.some(item => item.uri === currentTrack.uri);
@@ -68,29 +69,28 @@ export default function PlaylistTemplate({ match }) {
     useEffect(() => {
         if (auth) {
             // get playlist tracks
-            const getPlaylistItems = async () => {
-                const reqPlaylistItems = reqWithToken(`https://api.spotify.com/v1/playlists/${id}`, spotifyToken);
+            const getAlbumItems = async () => {
+                const reqSingleAlbum = reqWithToken(`https://api.spotify.com/v1/albums/${id}`, spotifyToken);
                 try {
-                    const response = await reqPlaylistItems();
+                    const response = await reqSingleAlbum();
                     if (response.status === 200) {
-                        const { description, images, name, tracks, uri } = response.data;
+                        const { album_type, artists, images, name, tracks, uri, release_date } = response.data;
                         setUri(uri);
                         setSongs(tracks.items.map(item => ({
-                            artists: item.track.artists.map(item => item.name),
-                            id: item.track.id,
-                            track_name: item.track.name,
-                            track_image: item.track.album.images[0].url,
-                            duration: item.track.duration_ms,
-                            uri: item.track.uri,
+                            id: item.id,
+                            artists: item.artists.map(item => item.name),
+                            track_name: item.name,
+                            duration: item.duration_ms,
+                            uri: item.uri,
                         })));
-                        setPlaylistInfo({ name: name, description: description, cover: images[0].url })
+                        setAlbumInfo({ type: album_type, name: name, artists: artists.map(artist => artist.name), cover: images[0].url, date: release_date });
                     }
                 } catch (error) {
                     console.log(error)
                 }
             }
 
-            getPlaylistItems();
+            getAlbumItems();
         }
     }, [id, spotifyToken, auth])
 
@@ -99,18 +99,19 @@ export default function PlaylistTemplate({ match }) {
             <Header bg={bgColor} />
             <PageBanner
                 bg={bgColor}
-                image={playlistInfo.cover}
-                title={playlistInfo.name}
+                type={albumInfo.type}
+                title={albumInfo.name}
+                image={albumInfo.cover}
+                release={albumInfo.date}
                 songs={songs.length}
-                owner="spotify"
                 duration={total_duration}
-                description={playlistInfo.description}
+                owner={albumInfo.artists && albumInfo.artists.join(` ${String.fromCodePoint(parseInt(8226))} `)}
                 isPlaying={isPlaying}
                 playContext={playContext}
                 saved={saved}
             >
-                <TrackList songs={songs} uri={uri} />
+                <TrackList songs={songs} uri={uri} type="single" />
             </PageBanner>
-        </Wrapper>
+        </Wrapper >
     )
 }

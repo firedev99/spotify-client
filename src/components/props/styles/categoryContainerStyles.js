@@ -16,6 +16,5 @@ export const SectionWrapper = styled.div`
 display: grid;
 width: 100%;
 height: 100%;
-grid-template-columns: repeat(6, minmax(156px, 1fr));
 column-gap: 24px;
 `;

@@ -53,7 +53,6 @@ export default function HomePage() {
                     {auth ? (
                         <>
                             <h3>Good evening</h3>
-                            {console.log(items)}
                             <TopInner style={{ gridTemplateColumns: dimensions.width < 1112 ? `repeat(${Math.ceil(dimensions.width / 392)}, minmax(0, 1fr)` : `repeat(4, minmax(0, 1fr)` }}>
                                 {items && typeof items !== 'undefined' && items.filter((item, index) => (dimensions.width < 1112 ? (index < Math.ceil(dimensions.width / 392)) : (index < 4))).map((item, index) => (
                                     <StretchFrame key={`my-playlist-${index}`} items={item} />
@@ -72,8 +71,12 @@ export default function HomePage() {
                     )}
                 </Top>
                 <RecommendedSection>
-                    {categoryItems && typeof categoryItems !== 'undefined' && categoryItems.map(({ id, name, ...item }, index) => (
-                        <CategoryContainer key={`recommended-categories-${id}`} title={index === 0 ? `Made for ${user && user.display_name}` : name} item={item} id={id} country={country} />
+                    {categoryItems && typeof categoryItems !== 'undefined' && categoryItems.map(({ id, name }, index) => (
+                        <CategoryContainer
+                            key={`recommended-categories-${id}`}
+                            title={index === 0 ? `Made for ${user && user.display_name}` : name}
+                            id={id}
+                        />
                     ))}
                 </RecommendedSection>
             </Container>

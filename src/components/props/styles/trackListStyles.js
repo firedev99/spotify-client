@@ -6,7 +6,20 @@ export const Wrapper = styled.div`
     position: relative;
     z-index: 5;
     user-select: none;
+    .popular {
+        margin-top: -6px;
+        margin-left: 4px;
+        margin-bottom: 12px;
+        font-size: 22px;
+        color: rgba(255, 255, 255, 0.9);
+    }
     ol {
+        .single {
+            grid-template-columns: 32px 1fr 60px;
+        }
+        .single_item {
+            grid-template-columns: 32px 1fr 0px;
+        }
         li {
             list-style: none;
             border-radius: 4px;
@@ -39,6 +52,10 @@ export const Wrapper = styled.div`
                     }
                 }
             }
+            .image_single {
+                display: flex;
+                flex-direction: column;
+            }
             .image {
                 display: flex;
                 align-items: center;
@@ -52,14 +69,15 @@ export const Wrapper = styled.div`
                     text-align: left !important;
                 }
             }
-            .album_name {
+            .album_artists {
                 font-size: 14px;
                 font-weight: 500;
+                overflow: hidden;
+                white-space: nowrap;
             }
             .duration {
                 font-size: 14px;
                 font-weight: 500;
-                text-align: right;
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;

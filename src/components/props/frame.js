@@ -5,21 +5,21 @@ import { PlayIcon } from '../../helpers/icons'
 // styled-components
 import { Container } from './styles/frameStyles'
 
-export default function Frame({ children, items, ...props }) {
+export default function Frame({ children, type, id, name, cover, description, ...props }) {
     return children ? (
         <Container {...props}>
             {children}
         </Container>
     ) : (
         <Container>
-            <Link to={`/playlist/${items.id}`}>
-                <div className="poster">
-                    <img src={items && items.images[0].url} alt={`${items.name}-poster`} loading="lazy" />
+            <Link to={`/${type}/${id}`}>
+                <div className="poster" style={{ borderRadius: type === "artist" && "50%" }}>
+                    <img style={{ borderRadius: type === "artist" && "50%" }} src={cover} alt={`${name}-poster`} loading="lazy" />
                     <button><PlayIcon /></button>
                 </div>
                 <div className="meta">
-                    <h3>{items && items.name}</h3>
-                    <p>{items && items.description}</p>
+                    <h3>{name}</h3>
+                    {description && <p>{(description)}</p>}
                 </div>
             </Link>
         </Container>

@@ -39,10 +39,16 @@ export const SongMeta = styled.div`
     }
     .artist_info {
         line-height: 15px;
-        max-width: 132px;
+        max-width: 128px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        display: flex;
+        .nav {
+            span {
+                margin: 0 4px 0 0;
+            }
+        }
         a {
             color: rgba(179, 179, 179, 0.9);
             font-size: 12px;

@@ -6,7 +6,7 @@ import PageBanner from '../../components/props/pageBanner';
 import randomColor from '../../utils/randomColor';
 import reqWithToken from '../../utils/reqWithToken';
 // context
-import { TrackContext, TokenContext, LoginContext } from '../../utils/context';
+import { TokenContext, LoginContext, UserContext } from '../../utils/context';
 // styled-components
 import { Wrapper } from "./styles/trackStyles"
 import TrackList from '../../components/props/trackList';
@@ -14,8 +14,7 @@ import TrackList from '../../components/props/trackList';
 export default function CollectionTracks() {
     const auth = useContext(LoginContext);
     const spotifyToken = useContext(TokenContext);
-    const { currentTrack } = useContext(TrackContext);
-
+    const user = useContext(UserContext);
 
     const [bgColor, setBgColor] = useState('');
     const [songs, setSongs] = useState([]);
@@ -31,7 +30,14 @@ export default function CollectionTracks() {
                     if (response.status === 200) {
                         let { items, total } = response.data;
                         setTotalSongs(total);
-                        setSongs([...items.map(item => item.track)])
+                        setSongs(items.map(item => ({
+                            track_name: item.track.name,
+                            track_image: item.track.album.images[0].url,
+                            duration: item.track.duration_ms,
+                            uri: item.track.uri,
+                            album_uri: item.track.album.uri,
+                            artists: item.track.artists.map(item => item.name)
+                        })))
                     } else {
                         console.log('opps, something happend.')
                     }
@@ -56,6 +62,7 @@ export default function CollectionTracks() {
                 bg={bgColor}
                 songs={totalSongs}
                 title="Liked Songs"
+                owner={typeof user !== 'undefined' && user.display_name}
                 image={'https://t.scdn.co/images/3099b3803ad9496896c43f22fe9be8c4.png'}
                 disabled={true}
             >

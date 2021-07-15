@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Route } from "react-router-dom";
 import axios from "axios";
 // pages
-import { HomePage, SearchPage, CollectionTracks } from "./pages";
+import { HomePage, SearchPage } from "./pages";
+// library-pages
+import { CollectionTracks, CollectionPlaylists, CollectionArtists, CollectionAlbums } from "./pages/library"
 // templates
-import { PlaylistTemplate } from './templates'
+import { AlbumTemplate, ArtistTemplate, PlaylistTemplate } from './templates'
 // components
 import Layout from "./components/layout";
 // utils
@@ -38,6 +40,7 @@ function App() {
           try {
             const [_userInfo, _userPlaylists] = await Promise.all([reqUserInfo(), reqUserPlaylists()]);
             setUserInfo(_userInfo.data);
+            console.log(_userInfo.data)
             setPlaylists(_userPlaylists.data)
           } catch (error) {
             console.log(error);
@@ -84,8 +87,13 @@ function App() {
               <Layout>
                 <Route path='/' exact component={HomePage} />
                 <Route path='/search' component={SearchPage} />
-                <Route path="/playlist/:id" component={PlaylistTemplate} />
+                <Route path="/collection/playlists" component={CollectionPlaylists} />
                 <Route path="/collection/tracks" component={CollectionTracks} />
+                <Route path="/collection/artists" component={CollectionArtists} />
+                <Route path="/collection/albums" component={CollectionAlbums} />
+                <Route path="/playlist/:id" component={PlaylistTemplate} />
+                <Route path="/album/:id" component={AlbumTemplate} />
+                <Route path="/artist/:id" component={ArtistTemplate} />
               </Layout>
             </PlaylistContext.Provider>
           </UserContext.Provider>
