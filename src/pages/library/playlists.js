@@ -38,6 +38,7 @@ export default function CollectionPlaylists() {
                             cover={playlist.images[0].url}
                             name={playlist.name}
                             description={playlist.description ? playlist.description : `by ${playlist.owner.display_name}`}
+                            uri={playlist.uri}
                         />
                     ))}
                 </FrameWrapper>

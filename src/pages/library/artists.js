@@ -57,6 +57,7 @@ export default function CollectionArtists() {
                             id={artist.id}
                             cover={artist.cover}
                             name={artist.name}
+                            uri={artist.uri}
                             description='Artist'
                         />
                     )) : (<h3>You're not following any artist yet, start listening to your fav ones soon.</h3>)}

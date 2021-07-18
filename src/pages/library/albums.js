@@ -17,7 +17,6 @@ export default function CollectionArtists() {
 
     const [savedAlbums, setSavedAlbums] = useState([]);
     const [albumsWrapper, dimensions] = useDimesions();
-    // console.log(savedAlbums);
 
     useEffect(() => {
         if (auth) {
@@ -61,6 +60,7 @@ export default function CollectionArtists() {
                             cover={album.cover}
                             name={album.name}
                             description={(album.description).join(", ")}
+                            uri={album.uri}
                         />
                     )) : (<h3>You're haven't liked any albums yet, start listening to your fav ones soon.</h3>)}
                 </FrameWrapper>

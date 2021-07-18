@@ -17,7 +17,6 @@ export default function CategoryContainer({ title = "FireyBoi", tag, id, childre
 
     const [playlists, setPlaylists] = useState([]);
     const { items: tracks } = playlists;
-
     const [sectionsRef, dimensions] = useDimesions();
 
     const [, country] = getLocale();
@@ -51,7 +50,7 @@ export default function CategoryContainer({ title = "FireyBoi", tag, id, childre
             {tag && <p>{tag}</p>}
             {auth && (
                 <SectionWrapper ref={sectionsRef} style={{ marginTop: "12px", gridTemplateColumns: dimensions.width < 1206 ? `repeat(${Math.ceil(dimensions.width / 220)}, minmax(0, 1fr)` : `repeat(6, minmax(0, 1fr)` }}>
-                    {tracks && tracks !== undefined && tracks.filter((playlist, index) => (dimensions.width < 1206 ? (index < Math.ceil(dimensions.width / 220)) : (index < 6))).map((playlist, index) => (
+                    {tracks && typeof tracks !== 'undefined' && tracks.filter((playlist, index) => (dimensions.width < 1206 ? (index < Math.ceil(dimensions.width / 220)) : (index < 6))).map((playlist, index) => (
                         <Frame
                             key={`playlist-${playlist.id}`}
                             type="playlist"
@@ -59,6 +58,7 @@ export default function CategoryContainer({ title = "FireyBoi", tag, id, childre
                             cover={playlist.images[0].url}
                             name={playlist.name}
                             description={playlist.description}
+                            uri={playlist.uri}
                         />
                     ))}
                 </SectionWrapper>

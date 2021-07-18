@@ -1,12 +1,35 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from "react-router-dom"
 // styled-components
 import { Container } from './styles/stretchStyles'
+// context
+import { PlayContext, TokenContext } from '../../utils/context'
+// utils
+import updateWithToken from '../../utils/updateWithToken'
 // icons 
 import { PlayIcon } from "../../helpers/icons"
 
 
 export default function StretchFrame({ items = {} }) {
+    const updatePlayer = useContext(PlayContext);
+    const spotifyToken = useContext(TokenContext);
+
+    function playContext() {
+        const body = {
+            context_uri: items.uri
+        }
+        const requestFunc = updateWithToken(`https://api.spotify.com/v1/me/player/play`, spotifyToken, body);
+        const requestMusic = async _ => {
+            const response = await requestFunc();
+            if (response.status === 204) {
+                setTimeout(() => updatePlayer(), 200);
+            } else {
+                console.log('Something happend.');
+            }
+        };
+        requestMusic();
+    };
+
     return (
         <Container>
             <Link to={`/playlist/${items.id}`}>
@@ -19,7 +42,7 @@ export default function StretchFrame({ items = {} }) {
                 </div>
                 <div className="meta">
                     <h3>{items && items.name.includes(":") ? items.name.split(":")[1] : items.name}</h3>
-                    <button>
+                    <button onClick={playContext}>
                         <PlayIcon />
                     </button>
                 </div>
