@@ -42,6 +42,21 @@ export const Container = styled.div`
                         }
                     }
                 }
+                .add_to_playlist {
+                    button {
+                        background: transparent;
+                        border: 1px solid rgba(179, 179, 179, 0.6);
+                        border-radius: 25px;
+                        padding: 8px 24px;
+                        color: rgba(255, 255, 255, 0.8);
+                        font-weight: 600;
+                        font-size: 13px;
+                        &:hover {
+                            transform: scale(1.08);
+                            cursor: pointer;
+                        }
+                    }
+                }
                 .meta {
                     display: flex;
                     .cover {

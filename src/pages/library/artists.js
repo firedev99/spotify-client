@@ -1,27 +1,33 @@
 import React, { useContext, useEffect, useState } from 'react'
+import axios from 'axios'
 // components
 import Frame from '../../components/props/frame'
 import Header from '../../components/header'
 import LibraryNavbar from './components/navbar'
+import SpotifyLoader from '../../components/props/loader'
 // utils
+import getWithToken from '../../utils/getWithToken'
+import { LoginContext, TokenContext } from '../../utils/context'
+// hooks
 import { useDimesions } from '../../hooks/useDimesions'
 // styled components
 import { Wrapper, Container, FrameWrapper } from "./styles/collectionStyles"
-import reqWithToken from '../../utils/reqWithToken'
-import { LoginContext, TokenContext } from '../../utils/context'
 
 export default function CollectionArtists() {
     const spotifyToken = useContext(TokenContext);
     const auth = useContext(LoginContext);
 
     const [followingArtists, setFollowingArtists] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const [artistsWrapper, dimensions] = useDimesions();
 
     useEffect(() => {
+        const cancelSource = axios.CancelToken.source();
+        // get artist playlists from library
         if (auth) {
-            const requestArtistList = reqWithToken(`https://api.spotify.com/v1/me/following?type=artist`, spotifyToken);
             async function getFollowingArtists() {
+                const requestArtistList = getWithToken(`https://api.spotify.com/v1/me/following?type=artist`, spotifyToken, cancelSource);
                 try {
                     const response = await requestArtistList();
                     if (response.status === 200) {
@@ -33,6 +39,7 @@ export default function CollectionArtists() {
                             cover: artist.images[0].url,
                             uri: artist.uri
                         })));
+                        setLoading(false);
                     }
                 } catch (error) {
                     console.log(error);
@@ -40,10 +47,14 @@ export default function CollectionArtists() {
             }
 
             getFollowingArtists();
+        } else {
+            setLoading(false);
         }
+
+        return _ => cancelSource.cancel();
     }, [auth, spotifyToken])
 
-    return (
+    return loading ? <SpotifyLoader /> : (
         <Wrapper>
             <Header />
             <Container>
@@ -60,7 +71,7 @@ export default function CollectionArtists() {
                             uri={artist.uri}
                             description='Artist'
                         />
-                    )) : (<h3>You're not following any artist yet, start listening to your fav ones soon.</h3>)}
+                    )) : (<h4>You're not following any artist yet, start listening to your fav ones soon.</h4>)}
                 </FrameWrapper>
             </Container>
         </Wrapper>

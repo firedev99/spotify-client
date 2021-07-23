@@ -6,11 +6,10 @@ export const Wrapper = styled.div`
     display: flex;
     align-items: center;
     position: relative;
-    
         &:after {
             display: ${(props) => props.active ? `block` : `none`};
             position: absolute;
-            z-index: 12;
+            z-index: 20;
             content: '';
             top: 0;
             left: 8px;
@@ -45,7 +44,7 @@ export const DeviceOptions = styled.div`
     width: auto;
     height: auto;
     position: absolute;
-    z-index: 10;
+    z-index: 20;
     bottom: 100%;
     right: 50%;
     background: rgba(40, 40, 40, 1);
@@ -70,6 +69,11 @@ export const DeviceOptions = styled.div`
     .devices {
         display: flex;
         flex-direction: column;
+        h3 {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+        }
         .device_item {
             display: flex;
             padding: 8px 16px;

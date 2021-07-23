@@ -3,6 +3,11 @@ import styled from "styled-components/macro";
 export const Wrapper = styled.div`
     display: flex;
     align-items: center;
+    .save_track {
+        @media(max-width: 800px) {
+            display: none;
+        }
+    }
 `;
 export const SongPoster = styled.div`
     width: 56px;
@@ -39,7 +44,7 @@ export const SongMeta = styled.div`
     }
     .artist_info {
         line-height: 15px;
-        max-width: 128px;
+        max-width: 124px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -52,26 +57,6 @@ export const SongMeta = styled.div`
         a {
             color: rgba(179, 179, 179, 0.9);
             font-size: 12px;
-        }
-    }
-`;
-
-export const LikeButton = styled.div`
-    button {
-        background: transparent;
-        outline: none;
-        border: none;
-        svg {
-            width: 18px;
-            height: 18px;
-            color: white;
-            fill: rgba(255, 255, 255, 0.8);
-            transition: all 0.1s;
-        }
-        &:hover {
-            svg {
-                fill: rgba(255, 255, 255, 1);
-            }
         }
     }
 `;

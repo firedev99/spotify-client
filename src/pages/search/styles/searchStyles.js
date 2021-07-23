@@ -1,4 +1,44 @@
-import styled from "styled-components/macro";
+import styled from "styled-components/macro"
+import { Link } from "react-router-dom"
+
+export const GenreFrame = styled(Link)`
+        height: 164px;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        border-radius: 8px;
+        padding: 16px;
+        text-decoration: none;
+        h3 {
+            font-size: 20px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .icon {
+            width: 96px;
+            height: 142px;
+            position: absolute;
+            bottom: -38px;
+            right: -32px;
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.6);
+            transform: rotate(-60deg);
+            img {
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+`;
+
+export const GenreWrapper = styled.div`
+    position: relative;
+    z-index: 15;
+    margin-top: 24px;
+    display: grid;
+    row-gap: 24px;
+    column-gap: 24px;
+`;
 
 export const Wrapper = styled.div`
     width: 100%;

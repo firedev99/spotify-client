@@ -1,17 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react'
+import axios from 'axios'
 // components
 import PageBanner from '../components/props/pageBanner'
 import Header from '../components/header'
 import TrackList from '../components/props/trackList'
+import SpotifyLoader from '../components/props/loader'
 // utils
-import reqWithToken from '../utils/reqWithToken'
+import getWithToken from '../utils/getWithToken'
+import updateWithToken from '../utils/updateWithToken'
 import randomColor from '../utils/randomColor'
-// context
-import { LoginContext, PlayContext, PlaylistContext, TokenContext, TrackContext } from '../utils/context'
+import { LoginContext, PlayContext, PlaylistContext, StatusContext, TokenContext, TrackContext } from '../utils/context'
 // styled-components
 import { Wrapper } from "./styles/playlistStyles"
-import updateWithToken from '../utils/updateWithToken'
-// hooks
+import AddToPlaylist from '../components/props/addToPlaylist';
 
 export default function PlaylistTemplate({ match }) {
     const { params: { id } } = match;
@@ -21,11 +22,13 @@ export default function PlaylistTemplate({ match }) {
     const playlistTracks = useContext(PlaylistContext);
     const updatePlayer = useContext(PlayContext);
     const { currentTrack } = useContext(TrackContext);
+    const setFlash = useContext(StatusContext);
 
     const [bgColor, setBgColor] = useState('');
     const [songs, setSongs] = useState([]);
     const [uri, setUri] = useState('');
     const [saved, setSaved] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [playlistInfo, setPlaylistInfo] = useState({
         name: '',
         cover: '',
@@ -45,7 +48,7 @@ export default function PlaylistTemplate({ match }) {
             if (response.status === 204) {
                 setTimeout(() => updatePlayer(), 200);
             } else {
-                console.log('Something happend.');
+                setFlash('Opps, something went wrong!');
             }
         };
         requestMusic();
@@ -66,13 +69,14 @@ export default function PlaylistTemplate({ match }) {
     }, [id, playlistTracks])
 
     useEffect(() => {
+        const cancelSource = axios.CancelToken.source();
+        // get items of a specific playlist
         if (auth) {
-            // get playlist tracks
             const getPlaylistItems = async () => {
-                const reqPlaylistItems = reqWithToken(`https://api.spotify.com/v1/playlists/${id}`, spotifyToken);
+                const reqPlaylistItems = getWithToken(`https://api.spotify.com/v1/playlists/${id}`, spotifyToken, cancelSource);
                 try {
                     const response = await reqPlaylistItems();
-                    if (response.status === 200) {
+                    if (typeof response !== 'undefined' && response.status === 200) {
                         const { description, images, name, tracks, uri } = response.data;
                         setUri(uri);
                         setSongs(tracks.items.map(item => ({
@@ -83,7 +87,8 @@ export default function PlaylistTemplate({ match }) {
                             duration: item.track.duration_ms,
                             uri: item.track.uri,
                         })));
-                        setPlaylistInfo({ name: name, description: description, cover: images[0].url })
+                        setPlaylistInfo({ name: name, description: description, cover: images[0] && images[0].url })
+                        setLoading(false);
                     }
                 } catch (error) {
                     console.log(error)
@@ -92,24 +97,27 @@ export default function PlaylistTemplate({ match }) {
 
             getPlaylistItems();
         }
-    }, [id, spotifyToken, auth])
 
-    return (
+        return _ => cancelSource.cancel();
+    }, [id, spotifyToken, auth]);
+
+    return loading ? <SpotifyLoader /> : (
         <Wrapper>
             <Header bg={bgColor} />
             <PageBanner
                 bg={bgColor}
                 image={playlistInfo.cover}
                 title={playlistInfo.name}
-                songs={songs.length}
+                songs={songs.length !== 0 && songs.length}
                 owner="spotify"
-                duration={total_duration}
+                duration={total_duration !== 0 && total_duration}
                 description={playlistInfo.description}
                 isPlaying={isPlaying}
                 playContext={playContext}
                 saved={saved}
+                id={id}
             >
-                <TrackList songs={songs} uri={uri} />
+                {songs.length !== 0 ? (<TrackList songs={songs} uri={uri} />) : (<AddToPlaylist id={id} />)}
             </PageBanner>
         </Wrapper>
     )

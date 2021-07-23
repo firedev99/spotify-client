@@ -7,3 +7,8 @@ export const Wrapper = styled.div`
     background-image: linear-gradient(rgba(0,0,0,0.6) 0,#121212 100%);
     overflow-y: auto;
 `;
+
+export const GenreTempWrapper = styled.div`
+    padding: 32px;
+    margin-top: 68px;
+`;

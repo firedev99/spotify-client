@@ -14,6 +14,10 @@ export const Container = styled.div`
     .artist {
         border-radius: 50%;
     }
+
+    @media(max-width: 890px) {
+        padding: 0 16px;
+    }
 `;
 
 export const Poster = styled.div`
@@ -25,6 +29,10 @@ export const Poster = styled.div`
         width: 100%;
         height: 100%;
         object-fit: cover;
+    }
+
+    @media(max-width: 786px) {
+        height: 196px;
     }
 `;
 
@@ -64,6 +72,18 @@ export const PageMeta = styled.div`
             color: rgba(255, 255, 255, 0.7);
         }
     }
+
+    @media(max-width: 1111px) {
+        h2 {
+            font-size: 56px !important;
+            line-height: 64px !important;
+        }
+    }
+
+    @media(max-width: 786px) {
+        padding: 46px 16px;
+    }
+    
 `;
 
 export const Overlay = styled.div`
@@ -82,21 +102,27 @@ export const Functionality = styled.div`
     position: relative;
     z-index: 40;
     display: flex;
-    .like {
-        margin-left: 28px;
-        background: none;
+    align-items: center;
+    .edit, .delete {
+        background: transparent;
         outline: none;
         border: none;
+        margin-left: 24px;
         svg {
-            width: 38px;
-            height: 38px;
-            fill: rgba(255, 255, 255, 0.75);
+            width: 30px;
+            height: 30px;
+            color: rgba(179, 179, 179, 0.9);
         }
-        &:hover {
-            svg {
-                fill: rgba(255, 255, 255, 0.9);
-            }
+    }
+    .delete {
+        svg {
+            width: 30px;
+            height: 30px;
         }
+    }
+    .like {
+        margin-left: 24px;
+        margin-top: 4px;
     }
     .round {
         outline: none;

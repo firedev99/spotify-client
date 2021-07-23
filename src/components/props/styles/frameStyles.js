@@ -12,16 +12,14 @@ export const Container = styled.div`
         width: 100%;
         height: 100%;
         cursor: pointer;
-        /* .artists_poster {
-            border-radius: 50%;
-            img {
-                border-radius: 50%;
-            }
-        } */
         .poster {
             height: 70%;
             padding: 16px;
             position: relative;
+            text-align: center;
+            h1 {
+                color: rgba(255, 255, 255, 0.9);
+            }
             button {
                 position: absolute;
                 height: 42px;

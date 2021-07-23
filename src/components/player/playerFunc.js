@@ -1,19 +1,22 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import axios from 'axios';
 // components
 import Progressbar from "../props/progressBar";
+// hooks
+import getWithToken from '../../utils/getWithToken';
 // utils
-import reqWithToken from '../../utils/reqWithToken'
+import useOnclickOutside from '../../hooks/useOnclickOutside';
 import updateWithToken from '../../utils/updateWithToken';
-// icons
-import { DeviceIcon, VolumeIcon, MaximixeIcon, MonitorIcon, SmartPhoneIcon } from '../../helpers/icons'
 // context
-import { TokenContext } from '../../utils/context';
+import { StatusContext, TokenContext } from '../../utils/context';
 // styled-components
 import { Wrapper, DeviceOptions, VolumeFunc } from "./styles/funcStyles"
-import useOnclickOutside from '../../hooks/useOnclickOutside';
+// icons
+import { DeviceIcon, VolumeIcon, MaximixeIcon, MonitorIcon, SmartPhoneIcon } from '../../helpers/icons'
 
 export default function PlayerFunctionality({ toggleDevice = false, setToggleDevice, handleMaximize, isFullScreen }) {
     const spotifyToken = useContext(TokenContext);
+    const setFlash = useContext(StatusContext);
 
     const deviceRef = useRef(null);
     const [devices, setDevices] = useState([]);
@@ -22,14 +25,16 @@ export default function PlayerFunctionality({ toggleDevice = false, setToggleDev
     useOnclickOutside(deviceRef, () => setToggleDevice(false));
 
     useEffect(() => {
+        const cancelSource = axios.CancelToken.source();
+        // get user's all devices information
         if (toggleDevice) {
             const getDeviceInfo = async _ => {
-                const requestFunc = reqWithToken('https://api.spotify.com/v1/me/player/devices', spotifyToken);
+                const requestFunc = getWithToken('https://api.spotify.com/v1/me/player/devices', spotifyToken, cancelSource);
                 try {
                     const response = await requestFunc();
                     if (response.status === 200) {
                         let { devices } = response.data;
-                        setDevices(devices)
+                        setDevices(devices);
                     }
                 } catch (error) {
                     console.log(error)
@@ -37,8 +42,11 @@ export default function PlayerFunctionality({ toggleDevice = false, setToggleDev
             }
             getDeviceInfo();
         }
-    }, [toggleDevice, spotifyToken])
 
+        return _ => cancelSource.cancel();
+    }, [toggleDevice, spotifyToken, setFlash])
+
+    // switch or transfer device 
     const switchDevice = (id) => {
         if (typeof spotifyToken !== 'undefined') {
             const data = { device_ids: [id] };
@@ -48,6 +56,8 @@ export default function PlayerFunctionality({ toggleDevice = false, setToggleDev
                     const response = await reqFunction();
                     if (response.status === 204) {
                         setToggleDevice(false);
+                    } else {
+                        setFlash('Opps, something went wrong!');
                     }
                 } catch (error) {
                     console.log(error)
@@ -58,6 +68,7 @@ export default function PlayerFunctionality({ toggleDevice = false, setToggleDev
         }
     };
 
+    // handle volume
     const handleVolume = (ratio) => {
         const integer = Math.round(ratio * 100);
         const seekVolume = async _ => {
@@ -67,7 +78,7 @@ export default function PlayerFunctionality({ toggleDevice = false, setToggleDev
                 if (response.status === 204) {
                     setVolume(ratio);
                 } else {
-                    console.log('Opps, something happend 😶');
+                    setFlash('Opps, something went wrong!');
                 }
             } catch (error) {
                 console.log(error)
@@ -89,9 +100,9 @@ export default function PlayerFunctionality({ toggleDevice = false, setToggleDev
                             <img src='https://open.scdn.co/cdn/images/connect_header@1x.ecc6912d.png' alt="devices-png" draggable="false" />
                         </div>
                         <div className="devices">
-                            {devices && devices.length === 0 ? (<h3>No Device Available</h3>) : (
+                            {devices && devices.length === 0 ? (<h3>No device available, or try to close and reopen this modal</h3>) : (
                                 devices.map(items => (
-                                    <div key={items.id} className="device_item" onClick={() => { switchDevice(items.id) }}>
+                                    <div key={items.id} className="device_item" onClick={() => items.is_active === true ? null : switchDevice(items.id)}>
                                         <div className="icon">
                                             {items.type === "Computer" ? <MonitorIcon /> : <SmartPhoneIcon />}
                                         </div>

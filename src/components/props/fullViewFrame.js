@@ -10,7 +10,6 @@ const RecommendedContainer = styled.div`
 `;
 
 export default function FullViewFrame({ width, albums, key, ref }) {
-    console.log(width)
     return (
         <>
             <RecommendedContainer ref={ref} style={{ marginTop: "12px", gridTemplateColumns: width < 1206 ? `repeat(${Math.ceil(width / 220)}, minmax(0, 1fr)` : `repeat(6, minmax(0, 1fr)` }}>

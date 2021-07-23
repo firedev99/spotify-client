@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
+import axios from 'axios'
 // components
 import Header from "../../components/header"
 import StretchFrame from '../../components/props/stretchFrame'
 import CategoryContainer from '../../components/props/categoryContainer'
 import Frame from '../../components/props/frame'
+import SpotifyLoader from "../../components/props/loader"
 // hooks
 import { useDimesions } from "../../hooks/useDimesions"
-// context
-import { LoginContext, PlaylistContext, TokenContext, UserContext } from "../../utils/context"
 // utils 
-import reqWithToken from '../../utils/reqWithToken'
+import { LoginContext, PlaylistContext, TokenContext, UserContext } from "../../utils/context"
+import getWithToken from '../../utils/getWithToken'
 import getLocale from '../../utils/getLocale'
 // styled-components
 import { Wrapper, Container, Top, TopInner, RecommendedSection } from "./styles/homeStyles"
@@ -21,6 +22,7 @@ export default function HomePage() {
     const auth = useContext(LoginContext);
     const [locale, country] = getLocale();
 
+    const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState([]);
     const [featuredPlaylists, setFeaturedPlaylists] = useState([]);
 
@@ -30,22 +32,28 @@ export default function HomePage() {
     const [topRef, dimensions] = useDimesions();
 
     useEffect(() => {
-        if (auth && typeof spotifyToken !== 'undefined') {
-            const getBrowserCategories = async () => {
-                const featuredCategories = reqWithToken(`https://api.spotify.com/v1/browse/categories?country=${country}&locale=${locale}&limit=15`, spotifyToken);
-                const featuringPlaylists = reqWithToken(`https://api.spotify.com/v1/browse/featured-playlists?country=${country}&locale=${locale}&limit=4`, spotifyToken);
+        const cancelSource = axios.CancelToken.source();
+        if (auth) {
+            async function getBrowserCategories() {
+                const featuredCategories = getWithToken(`https://api.spotify.com/v1/browse/categories?country=${country}&locale=${locale}&limit=15`, spotifyToken, cancelSource);
+                const featuringPlaylists = getWithToken(`https://api.spotify.com/v1/browse/featured-playlists?country=${country}&locale=${locale}&limit=4`, spotifyToken, cancelSource);
                 try {
                     const [_featuredCategories, _featuringPlaylists] = await Promise.all([featuredCategories(), featuringPlaylists()]);
                     setCategories(_featuredCategories.data.categories);
                     setFeaturedPlaylists(_featuringPlaylists.data.playlists);
+                    setLoading(false);
                 } catch (error) {
                     console.error(error);
                 }
             }
             getBrowserCategories();
+        } else {
+            setLoading(false);
         }
-    }, [auth, spotifyToken, locale, country])
-    return (
+
+        return _ => cancelSource.cancel();
+    }, [auth, spotifyToken, locale, country]);
+    return loading ? <SpotifyLoader /> : (
         <Wrapper>
             <Header position="absolute" />
             <Container>
@@ -64,8 +72,8 @@ export default function HomePage() {
                         </>
                     ) : (
                         <CategoryContainer>
-                            <Frame style={{ height: '242px' }}>
-                                Hello
+                            <Frame style={{ height: '242px', width: '200px' }}>
+                                <img style={{ width: '100%', height: '100%', objectFit: 'cover' }} src='https://t.scdn.co/images/3099b3803ad9496896c43f22fe9be8c4.png' alt='browser_liked' />
                             </Frame>
                         </CategoryContainer>
                     )}

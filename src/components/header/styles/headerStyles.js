@@ -1,14 +1,11 @@
 import styled from "styled-components/macro";
 
 export const Wrapper = styled.header`
-    /* background: rgba(18, 18, 18, 1); */
-    /* background: #121212; */
     height: 58px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* position: absolute; */
     z-index: 50;
     top: 0;
     padding: 16px;
@@ -41,9 +38,26 @@ export const Navigations = styled.div`
     
 `;
 export const LocationNavigators = styled.div`
-    /* width: 100px;
-    height: 30px;
-    background: red; */
+    margin-left: 12px;
+    width: 86px;
+    display: flex;
+    justify-content: space-between;
+    button {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        svg {
+            width: 24px;
+            height: 24px;
+            color: rgba(179, 179, 179, 0.9);
+            stroke-width: 1.5px;
+        }
+    }
 `;
 
 export const UserNavigators = styled.div`

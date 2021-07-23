@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
-// context
-import { LoginContext, PlayContext, TokenContext, TrackContext } from '../utils/context'
+import axios from 'axios'
 // utils
+import { LoginContext, PlayContext, TokenContext, TrackContext } from '../utils/context'
 import randomColor from "../utils/randomColor"
-import reqWithToken from '../utils/reqWithToken'
+import getWithToken from '../utils/getWithToken'
 import updateWithToken from '../utils/updateWithToken'
 import getLocale from "../utils/getLocale"
 // components
 import Header from '../components/header'
 import PageBanner from '../components/props/pageBanner'
 import TrackList from '../components/props/trackList'
+import SpotifyLoader from '../components/props/loader'
 // styled-components
 import { Wrapper } from "./styles/artistStyles"
 
@@ -24,6 +25,7 @@ export default function AlbumTemplate({ match }) {
     const [bgColor, setBgColor] = useState('');
     const [uri, setUri] = useState('');
     const [songs, setSongs] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [artistInfo, setArtistInfo] = useState({
         type: '',
         name: '',
@@ -57,11 +59,13 @@ export default function AlbumTemplate({ match }) {
     }, [])
 
     useEffect(() => {
+        const cancelSource = axios.CancelToken.source();
+        // get an artits informations and check if it contains in the library or not
         if (auth) {
-            // get an artist's info, top songs, albums
             async function getArtistData() {
-                const reqInformations = reqWithToken(`https://api.spotify.com/v1/artists/${id}`, spotifyToken);
-                const reqTopTracks = reqWithToken(`https://api.spotify.com/v1/artists/${id}/top-tracks?market=${country}`, spotifyToken);
+                const reqInformations = getWithToken(`https://api.spotify.com/v1/artists/${id}`, spotifyToken, cancelSource);
+                const reqTopTracks = getWithToken(`https://api.spotify.com/v1/artists/${id}/top-tracks?market=${country}`, spotifyToken, cancelSource);
+
                 try {
                     const [_info, _tracks] = await Promise.all([reqInformations(), reqTopTracks()]);
                     if (_info.status === 200 && _tracks.status === 200) {
@@ -78,6 +82,7 @@ export default function AlbumTemplate({ match }) {
                             duration: item.duration_ms,
                             uri: item.uri
                         })));
+                        setLoading(false);
                     }
                 } catch (error) {
                     console.log(error);
@@ -86,25 +91,25 @@ export default function AlbumTemplate({ match }) {
 
             getArtistData();
         }
+
+        return _ => cancelSource.cancel();
     }, [id, spotifyToken, auth, country])
 
-    return (
-        <>
-            <Wrapper>
-                <Header bg={bgColor} />
-                <PageBanner
-                    bg={bgColor}
-                    disableHeart={true}
-                    type={artistInfo.type}
-                    title={artistInfo.name}
-                    image={artistInfo.cover}
-                    owner={`${(artistInfo.followers).toLocaleString("en-US")} monthly listeners`}
-                    playContext={playContext}
-                    isPlaying={isPlaying}
-                >
-                    <TrackList songs={songs} uri={uri} type="artist" />
-                </PageBanner>
-            </Wrapper >
-        </>
+    return loading ? <SpotifyLoader /> : (
+        <Wrapper>
+            <Header bg={bgColor} />
+            <PageBanner
+                bg={bgColor}
+                disableHeart={true}
+                type={artistInfo.type}
+                title={artistInfo.name}
+                image={artistInfo.cover}
+                owner={`${(artistInfo.followers).toLocaleString("en-US")} monthly listeners`}
+                playContext={playContext}
+                isPlaying={isPlaying}
+            >
+                <TrackList songs={songs} uri={uri} type="artist" />
+            </PageBanner>
+        </Wrapper >
     )
 }

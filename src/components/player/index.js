@@ -3,7 +3,7 @@ import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, 
 import SongStatus from './songStatus'
 import PlayerFunctionality from './playerFunc'
 // context
-import { TokenContext, TrackContext } from "../../utils/context"
+import { StatusContext, TokenContext, TrackContext } from "../../utils/context"
 // utils
 import reqWithToken from "../../utils/reqWithToken"
 import updateWithToken from '../../utils/updateWithToken'
@@ -15,6 +15,7 @@ import { Wrapper, Container, PlayerStatus, AudioPlayer, PlayerControl } from './
 
 function Player({ handleMaximize, isFullScreen }, ref) {
     const spotifyToken = useContext(TokenContext);
+    const setFlash = useContext(StatusContext);
     const { currentTrack, setCurrentTrack } = useContext(TrackContext);
 
     let fireyPlayer = useRef(null);
@@ -29,6 +30,7 @@ function Player({ handleMaximize, isFullScreen }, ref) {
         duration: 0,
     });
 
+    // handle ref from the start
     useImperativeHandle(ref, () => ({
         updateState: () => {
             setPlaybackState(state => ({ ...state, play: true }));
@@ -111,7 +113,6 @@ function Player({ handleMaximize, isFullScreen }, ref) {
 
     // get user's current player device infomations 
     const getPlayerInfo = _ => {
-        console.log('player status');
         const reqInformations = reqWithToken('https://api.spotify.com/v1/me/player', spotifyToken)
         const getFunc = async () => {
             try {
@@ -129,10 +130,9 @@ function Player({ handleMaximize, isFullScreen }, ref) {
                         progress: progress_ms,
                     }))
                 } else if (response.status === 204) {
-                    console.log('device not selected, NO CONTENT');
-                    console.log('Please select a device to start listening on FIREY SPOTIFY 🔥');
+                    setFlash('Please select a device to start listening on FIREY SPOTIFY 🔥');
                 } else {
-                    console.log('Error from spotify server 😑');
+                    setFlash('Error from Spotify Server');
                 }
             } catch (error) {
                 console.log(error);
@@ -178,7 +178,7 @@ function Player({ handleMaximize, isFullScreen }, ref) {
                     setPlaybackState(state => ({ ...state, play: !state.play }))
                     updateState();
                 } else {
-                    console.log('Oops, something went wrong 😔');
+                    setFlash('Opps, something went wrong!');
                     return;
                 }
             } catch (error) {
@@ -197,9 +197,9 @@ function Player({ handleMaximize, isFullScreen }, ref) {
                 const response = await request();
                 if (response.status === 204) {
                     setPlaybackState(state => ({ ...state, shuffle: !state.shuffle }));
-                    console.log(`Shuffle ${playbackState.shuffle ? "disabled" : "enabled"}`);
+                    setFlash(`Shuffle ${playbackState.shuffle ? "disabled" : "enabled"}`);
                 } else {
-                    console.log('Oops, something went wrong 😔');
+                    setFlash('Opps, something went wrong!');
                     return;
                 }
             } catch (error) {
@@ -217,7 +217,7 @@ function Player({ handleMaximize, isFullScreen }, ref) {
             try {
                 const response = await request();
                 if (response.status !== 204) {
-                    console.log('Oops, something went wrong 😔');
+                    setFlash('Opps, something went wrong!');
                     return;
                 };
             } catch (error) {
@@ -235,7 +235,7 @@ function Player({ handleMaximize, isFullScreen }, ref) {
             try {
                 const response = await request();
                 if (response.status !== 204) {
-                    console.log('Oops, something went wrong 😔');
+                    setFlash('Opps, something went wrong!');
                     return;
                 };
             } catch (error) {
@@ -254,9 +254,9 @@ function Player({ handleMaximize, isFullScreen }, ref) {
                 const response = await request();
                 if (response.status === 204) {
                     setPlaybackState(state => ({ ...state, repeat: !state.repeat }));
-                    console.log(`Repeat mode ${playbackState.repeat ? "disabled" : "enabled"}`);
+                    setFlash(`Repeat mode ${playbackState.repeat ? "disabled" : "enabled"}`);
                 } else {
-                    console.log('Oops, something went wrong 😔');
+                    setFlash('Opps, something went wrong!');
                     return;
                 }
             } catch (error) {

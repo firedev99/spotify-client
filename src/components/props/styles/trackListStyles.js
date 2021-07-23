@@ -15,10 +15,10 @@ export const Wrapper = styled.div`
     }
     ol {
         .single {
-            grid-template-columns: 32px 1fr 60px;
+            /* grid-template-columns: 32px 1fr 60px; */
         }
         .single_item {
-            grid-template-columns: 32px 1fr 0px;
+            /* grid-template-columns: 32px 1fr 0px; */
         }
         li {
             list-style: none;
@@ -28,6 +28,12 @@ export const Wrapper = styled.div`
             grid-template-columns: 32px 1fr 40% 60px;
             margin: 4px 0;
             transition: all 0.25s; 
+            @media(max-width: 1111px) {
+                grid-template-columns: 32px 1fr 40px;
+                .albumm {
+                    display: none;
+                }
+            }
             .index {
                 display: flex;
                 align-items: center;
@@ -59,6 +65,9 @@ export const Wrapper = styled.div`
             .image {
                 display: flex;
                 align-items: center;
+                @media(max-width: 1111px) {
+                    display: none;
+                }
                 img {
                     width: 42px;
                     height: 42px;
@@ -119,4 +128,5 @@ export const Wrapper = styled.div`
             }
         }
     }
+
 `;

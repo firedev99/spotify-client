@@ -1,18 +1,23 @@
-import React, { useContext } from 'react';
-import { Link, NavLink } from "react-router-dom";
-// context
-import { LoginContext, PlaylistContext } from '../../utils/context';
+import React, { useContext, useState } from 'react'
+import { Link, NavLink } from "react-router-dom"
+// components
+import EditUi from '../props/editUi'
+// utils
+import { LoginContext, PlaylistContext } from '../../utils/context'
 // icons
-import { Logo, HomeIcon, SearchIcon, CollectionIcon, PlusIcon, HeartIcon } from '../../helpers/icons';
+import { Logo, HomeIcon, SearchIcon, CollectionIcon, PlusIcon, HeartIcon } from '../../helpers/icons'
 // styled-components
-import { Wrapper, Container, Banner, NavItems, NavRoot, ClientInfo, CreatePlaylist, LikedSongs, SpotifyApp, UserPlaylists } from "./styles/sidebarStyles";
+import { Wrapper, Container, Banner, NavItems, NavRoot, ClientInfo, CreatePlaylist, LikedSongs, SpotifyApp, UserPlaylists } from "./styles/sidebarStyles"
 
 export default function Sidebar() {
     const auth = useContext(LoginContext);
     const { items } = useContext(PlaylistContext);
 
+    const [toggle, setToggle] = useState(false);
+
     return (
         <Wrapper>
+            {toggle && <EditUi toggle={toggle} setToggle={setToggle} />}
             <Container>
                 <Banner>
                     <Link draggable="false" to="/">
@@ -47,7 +52,7 @@ export default function Sidebar() {
                 </NavItems>
                 <NavRoot>
                     <CreatePlaylist>
-                        <button>
+                        <button onClick={auth ? () => setToggle(true) : null}>
                             <div className="rect">
                                 <PlusIcon />
                             </div>

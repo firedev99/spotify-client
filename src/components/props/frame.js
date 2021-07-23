@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 // context
-import { PlayContext, TokenContext } from '../../utils/context'
+import { PlayContext, StatusContext, TokenContext } from '../../utils/context'
 // utils
 import updateWithToken from '../../utils/updateWithToken'
 // icons
@@ -12,7 +12,9 @@ import { Container } from './styles/frameStyles'
 export default function Frame({ children, type, id, name, uri, cover, description, ...props }) {
     const spotifyToken = useContext(TokenContext);
     const updatePlayer = useContext(PlayContext);
+    const setFlash = useContext(StatusContext);
 
+    // play the whole playlist
     function playContext() {
         const body = {
             context_uri: uri
@@ -23,7 +25,7 @@ export default function Frame({ children, type, id, name, uri, cover, descriptio
             if (response.status === 204) {
                 setTimeout(() => updatePlayer(), 200);
             } else {
-                console.log('Something happend.');
+                setFlash('Opps, something went wrong!');
             }
         };
         requestMusic();
@@ -37,7 +39,9 @@ export default function Frame({ children, type, id, name, uri, cover, descriptio
         <Container>
             <Link to={`/${type}/${id}`}>
                 <div className="poster" style={{ borderRadius: type === "artist" && "50%" }}>
-                    <img style={{ borderRadius: type === "artist" && "50%" }} src={cover} alt={`${name}-poster`} loading="lazy" />
+                    {typeof cover !== 'undefined' ? (<img style={{ borderRadius: type === "artist" && "50%" }} src={cover} alt={`${name}-poster`} loading="lazy" />) : (
+                        <h1>N/DP</h1>
+                    )}
                     <button onClick={playContext}><PlayIcon /></button>
                 </div>
                 <div className="meta">

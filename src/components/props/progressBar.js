@@ -9,16 +9,19 @@ export default function Progressbar({ className, value, setValue, func }) {
     const [isDragging, setIsDraging] = useState(false);
     const [scrub, setScrub] = useState(null);
 
+    // handle mouse enter event
     const handleEnter = () => {
         setEngaged(true);
     }
 
+    // hanle mouse leave event
     const handleLeave = () => {
         if (!isDragging) {
             setEngaged(false);
         }
     };
 
+    // handle mouse stoped hovering or leaving
     const handleMouseDown = (event) => {
         setIsDraging(true);
         const rect = wrapperRef.current.getBoundingClientRect();
@@ -38,6 +41,7 @@ export default function Progressbar({ className, value, setValue, func }) {
             }
         };
 
+        // handle event on drag
         const handleMove = (e) => {
             if (engaged && isDragging) {
                 const rect = wrapperRef.current.getBoundingClientRect();

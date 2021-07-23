@@ -41,9 +41,9 @@ export const PlusIcon = () => {
 };
 
 
-export const HeartIcon = () => {
+export const HeartIcon = ({ size = 14 }) => {
     return (
-        <svg role="img" height="12" width="12" viewBox="0 0 16 16">
+        <svg role="img" height={size} width={size} viewBox="0 0 16 16">
             <path fill="none" d="M0 0h16v16H0z"></path>
             <path className="heart" fill="#b3b3b3" d="M13.797 2.727a4.057 4.057 0 00-5.488-.253.558.558 0 01-.31.112.531.531 0 01-.311-.112 4.054 4.054 0 00-5.487.253c-.77.77-1.194 1.794-1.194 2.883s.424 2.113 1.168 2.855l4.462 5.223a1.791 1.791 0 002.726 0l4.435-5.195a4.052 4.052 0 001.195-2.883 4.057 4.057 0 00-1.196-2.883z"></path>
         </svg>
@@ -75,9 +75,9 @@ export const PlayIcon = _ => {
     )
 };
 
-export const HeartOutlineIcon = _ => {
+export const HeartOutlineIcon = ({ size = "16" }) => {
     return (
-        <svg height="32" width="32" viewBox="0 0 32 32">
+        <svg height={size} width={size} viewBox="0 0 32 32">
             <path d="M27.672 5.573a7.904 7.904 0 00-10.697-.489c-.004.003-.425.35-.975.35-.564 0-.965-.341-.979-.354a7.904 7.904 0 00-10.693.493A7.896 7.896 0 002 11.192c0 2.123.827 4.118 2.301 5.59l9.266 10.848a3.196 3.196 0 004.866 0l9.239-10.819A7.892 7.892 0 0030 11.192a7.896 7.896 0 00-2.328-5.619zm-.734 10.56l-9.266 10.848c-.837.979-2.508.979-3.346 0L5.035 16.104A6.9 6.9 0 013 11.192 6.9 6.9 0 015.035 6.28a6.935 6.935 0 014.913-2.048 6.89 6.89 0 014.419 1.605A2.58 2.58 0 0016 6.434c.914 0 1.555-.53 1.619-.585a6.908 6.908 0 019.346.431C28.277 7.593 29 9.337 29 11.192s-.723 3.6-2.062 4.941z"></path>
         </svg>
     )
@@ -170,3 +170,46 @@ export const SmartPhoneIcon = () => {
         </svg>
     )
 };
+
+export const CrossIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+    )
+};
+
+export const MusicIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+    )
+};
+
+export const EditIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="19" cy="12" r="1"></circle>
+            <circle cx="5" cy="12" r="1"></circle>
+        </svg>
+    )
+};
+
+export const ChevronRight = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6">
+            </polyline>
+        </svg>
+    )
+};
+
+export const ChevronLeft = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+    )
+}

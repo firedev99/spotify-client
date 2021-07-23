@@ -10,6 +10,9 @@ export const Wrapper = styled.nav`
     @media (max-width: 1024px) {
         width: 212px;
     }
+    @media (max-width: 1024px) {
+        display: none;
+    }
 `;
 
 export const Container = styled.div`

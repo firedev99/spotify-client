@@ -1,14 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
-// context
-import { LoginContext, PlayContext, PlaylistContext, TokenContext, TrackContext } from '../utils/context';
+import axios from 'axios'
 // utils
-import randomColor from "../utils/randomColor";
-import reqWithToken from '../utils/reqWithToken'
-import updateWithToken from '../utils/updateWithToken';
+import { LoginContext, PlayContext, TokenContext, TrackContext } from '../utils/context'
+import randomColor from "../utils/randomColor"
+import getWithToken from '../utils/getWithToken'
+import updateWithToken from '../utils/updateWithToken'
 // components
 import Header from '../components/header'
 import PageBanner from '../components/props/pageBanner'
 import TrackList from '../components/props/trackList'
+import SpotifyLoader from '../components/props/loader'
 // styled-components
 import { Wrapper } from "./styles/albumStyles"
 
@@ -17,12 +18,16 @@ export default function AlbumTemplate({ match }) {
 
     const auth = useContext(LoginContext);
     const spotifyToken = useContext(TokenContext);
-    const playlistTracks = useContext(PlaylistContext);
     const updatePlayer = useContext(PlayContext);
     const { currentTrack } = useContext(TrackContext);
 
     const [bgColor, setBgColor] = useState('');
     const [saved, setSaved] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [songs, setSongs] = useState([]);
+    const [uri, setUri] = useState('');
+    const total_duration = songs && songs.reduce((sum, { duration }) => sum + duration, 0);
+    const isPlaying = currentTrack && currentTrack.play === true && songs.some(item => item.uri === currentTrack.uri);
     const [albumInfo, setAlbumInfo] = useState({
         type: '',
         name: '',
@@ -30,12 +35,8 @@ export default function AlbumTemplate({ match }) {
         artists: '',
         date: '',
     });
-    const [songs, setSongs] = useState([]);
-    const [uri, setUri] = useState('');
 
-    const total_duration = songs && songs.reduce((sum, { duration }) => sum + duration, 0);
-    const isPlaying = currentTrack && currentTrack.play === true && songs.some(item => item.uri === currentTrack.uri);
-    // play playlist or album 
+    // play whole playlist or album 
     const playContext = _ => {
         const body = {
             context_uri: uri
@@ -51,30 +52,23 @@ export default function AlbumTemplate({ match }) {
         };
         requestMusic();
     };
-
     useEffect(() => {
         // set a random linear background color
         setBgColor(randomColor());
-        // check if the playlist is saved in library or not
-        if (id && playlistTracks.length !== 0) {
-            const playlist_ids = playlistTracks.items.map(tracks => {
-                return tracks.id;
-            })
-            if (playlist_ids.includes(id)) {
-                setSaved(true);
-            }
-        }
-    }, [id, playlistTracks])
+    }, [])
 
     useEffect(() => {
+        const cancelSource = axios.CancelToken.source();
+        // get a specific album's items and check if it contains in the library
         if (auth) {
-            // get playlist tracks
-            const getAlbumItems = async () => {
-                const reqSingleAlbum = reqWithToken(`https://api.spotify.com/v1/albums/${id}`, spotifyToken);
+            async function getAlbumItems() {
                 try {
-                    const response = await reqSingleAlbum();
-                    if (response.status === 200) {
-                        const { album_type, artists, images, name, tracks, uri, release_date } = response.data;
+                    const reqSingleAlbum = getWithToken(`https://api.spotify.com/v1/albums/${id}`, spotifyToken, cancelSource);
+                    const checkAlbum = getWithToken(`https://api.spotify.com/v1/me/albums/contains?ids=${id}`, spotifyToken, cancelSource);
+                    const [_album, _checkAlbum] = await Promise.all([reqSingleAlbum(), checkAlbum()]);
+
+                    if (_album.status === 200 && _checkAlbum.status === 200) {
+                        let { album_type, artists, images, name, tracks, uri, release_date } = _album.data;
                         setUri(uri);
                         setSongs(tracks.items.map(item => ({
                             id: item.id,
@@ -83,7 +77,16 @@ export default function AlbumTemplate({ match }) {
                             duration: item.duration_ms,
                             uri: item.uri,
                         })));
-                        setAlbumInfo({ type: album_type, name: name, artists: artists.map(artist => artist.name), cover: images[0].url, date: release_date });
+                        setAlbumInfo({
+                            type: album_type,
+                            name: name,
+                            artists: artists.map(artist => artist.name),
+                            cover: images[0].url, date: release_date
+                        });
+                        if (_checkAlbum.data.some(item => item === true)) {
+                            setSaved(true);
+                        }
+                        setLoading(false);
                     }
                 } catch (error) {
                     console.log(error)
@@ -92,9 +95,11 @@ export default function AlbumTemplate({ match }) {
 
             getAlbumItems();
         }
+
+        return _ => cancelSource.cancel();
     }, [id, spotifyToken, auth])
 
-    return (
+    return loading ? <SpotifyLoader /> : (
         <Wrapper>
             <Header bg={bgColor} />
             <PageBanner
@@ -108,6 +113,7 @@ export default function AlbumTemplate({ match }) {
                 owner={albumInfo.artists && albumInfo.artists.join(` ${String.fromCodePoint(parseInt(8226))} `)}
                 isPlaying={isPlaying}
                 playContext={playContext}
+                id={id}
                 saved={saved}
             >
                 <TrackList songs={songs} uri={uri} type="single" />

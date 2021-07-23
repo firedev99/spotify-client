@@ -1,9 +1,8 @@
 import styled from "styled-components/macro";
 
 export const Wrapper = styled.div`
-    height: 100vh;
-    max-height: calc(100vh - 90px);
     width: 100%;
+    max-height: calc(100vh - 90px);
     background-image: linear-gradient(rgba(0,0,0,.6) 0,#121212 100%);
     user-select: none;
     overflow-y: auto;

@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const updateWithToken = (enpoint, access_token, data) => {
+const updateWithToken = (enpoint, token, data) => {
     let source = axios.CancelToken.source();
 
     const request = async () => {
@@ -9,7 +9,7 @@ const updateWithToken = (enpoint, access_token, data) => {
             url: enpoint,
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${access_token}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             data,

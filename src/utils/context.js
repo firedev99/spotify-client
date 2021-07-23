@@ -4,6 +4,8 @@ export const UserContext = createContext({});
 
 export const LoginContext = createContext(false);
 
+export const StatusContext = createContext(() => { });
+
 export const TokenContext = createContext(null);
 
 export const PlaylistContext = createContext([]);

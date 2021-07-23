@@ -1,23 +1,27 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { NavLink } from "react-router-dom"
-// context
-import { TokenContext, TrackContext } from '../../utils/context'
+import axios from 'axios'
+// components
+import SaveToLibrary from '../props/saveToLibrary'
 // utils
-import reqWithToken from '../../utils/reqWithToken'
-// icons
-import { HeartOutlineIcon } from "../../helpers/icons"
+import { TokenContext, TrackContext } from '../../utils/context'
+import getWithToken from '../../utils/getWithToken'
 // styled-components
-import { Wrapper, SongPoster, SongMeta, LikeButton } from "./styles/statusStyles"
+import { Wrapper, SongPoster, SongMeta } from "./styles/statusStyles"
 
 export default function SongStatus() {
     const spotifyToken = useContext(TokenContext);
     const { currentTrack, setCurrentTrack } = useContext(TrackContext);
 
+    const [saved, setSaved] = useState(false);
+
     useEffect(() => {
+        const cancelSource = axios.CancelToken.source();
+        // get recently played track if nothing is beign played yet
         if (!currentTrack || Object.keys(currentTrack).length === 0) {
-            const recentlyPlayedTrack = async _ => {
+            async function recentlyPlayedTrack() {
                 try {
-                    const getTrack = reqWithToken('https://api.spotify.com/v1/me/player/recently-played?limit=1', spotifyToken);
+                    const getTrack = getWithToken('https://api.spotify.com/v1/me/player/recently-played?limit=1', spotifyToken, cancelSource);
                     const response = await getTrack();
                     if (response.status === 200) {
                         let { items } = response.data;
@@ -31,6 +35,27 @@ export default function SongStatus() {
             recentlyPlayedTrack();
         }
 
+        if (currentTrack && typeof currentTrack.id !== 'undefined') {
+            // check if the track is saved in user's library
+            async function checkSavedStatus() {
+                try {
+                    const checkSaved = getWithToken(`https://api.spotify.com/v1/me/tracks/contains?ids=${currentTrack.id}`, spotifyToken, cancelSource);
+                    const response = await checkSaved();
+                    if (typeof response !== 'undefined') {
+                        if (response.status === 200 && response.data.some(item => item === true)) {
+                            setSaved(true);
+                        } else {
+                            setSaved(false);
+                        }
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            checkSavedStatus();
+        }
+
+        return _ => cancelSource.cancel();
     }, [spotifyToken, currentTrack, setCurrentTrack])
 
     return (
@@ -53,11 +78,9 @@ export default function SongStatus() {
                     })}
                 </div>
             </SongMeta>
-            <LikeButton>
-                <button>
-                    <HeartOutlineIcon />
-                </button>
-            </LikeButton>
+            <div className="save_track">
+                <SaveToLibrary type="track" size={20} liked={saved} id={typeof currentTrack.id !== 'undefined' && currentTrack.id} />
+            </div>
         </Wrapper>
     )
 }

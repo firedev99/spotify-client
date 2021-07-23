@@ -1,14 +1,18 @@
-import axios from 'axios'
+import axios from "axios"
 
-export default function reqWithToken(endpoint, access_token) {
+export default function delWithToken(enpoint, token, data) {
     let source = axios.CancelToken.source();
 
-    const request = async () => {
+    async function request() {
         let result
         const options = {
-            url: endpoint,
-            method: 'GET',
-            headers: { 'Authorization': 'Bearer ' + access_token },
+            url: enpoint,
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            data,
             cancelToken: source.token
         };
         try {
@@ -21,4 +25,4 @@ export default function reqWithToken(endpoint, access_token) {
     }
 
     return request;
-}
+};

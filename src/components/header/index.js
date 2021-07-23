@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 // context
 import { LoginContext, UserContext } from "../../utils/context";
 // components
@@ -7,18 +8,22 @@ import UserMenu from "./userMenu";
 import useOnclickOutside from "../../hooks/useOnclickOutside";
 import useKeypress from "../../hooks/useKeypress";
 // icons 
-import { ChevronDownIcon } from "../../helpers/icons";
+import { ChevronDownIcon, ChevronLeft, ChevronRight } from "../../helpers/icons";
 // styled-components
 import { Wrapper, LocationNavigators, Navigations, UserNavigators, DisplayPicture } from "./styles/headerStyles";
 
 export default function Header({ bg = 'transperant', position = 'relative' }) {
+    const history = useHistory();
     const menuRef = useRef(null);
     const [toggle, setToggle] = useState(false);
 
     const auth = useContext(LoginContext);
     const user = useContext(UserContext);
 
+    // handle event on pressing keyboard button enter
     const escKey = useKeypress('Escape');
+
+    // handle click outside the ref
     useOnclickOutside(menuRef, () => setToggle(false));
 
     useEffect(() => {
@@ -29,11 +34,18 @@ export default function Header({ bg = 'transperant', position = 'relative' }) {
 
     return (
         <Wrapper style={{ background: bg, position }}>
-            <LocationNavigators />
+            <LocationNavigators>
+                <button onClick={() => history.goBack()}>
+                    <ChevronLeft />
+                </button>
+                <button onClick={() => history.goForward()}>
+                    <ChevronRight />
+                </button>
+            </LocationNavigators>
             {auth ? (
                 <UserNavigators ref={menuRef} style={{ backgroundColor: toggle && `rgba(179, 179, 179, 0.15)` }} onClick={() => setToggle(!toggle)}>
                     <DisplayPicture>
-                        <img src={user && user.images && user.images[0].url} alt='user-dp' />
+                        {Object.keys(user).length !== 0 && <img src={user.images && user.images[0].url} alt='user-dp' />}
                     </DisplayPicture>
                     <span>{user && user.display_name}</span>
                     <ChevronDownIcon />

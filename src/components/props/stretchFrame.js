@@ -14,6 +14,7 @@ export default function StretchFrame({ items = {} }) {
     const updatePlayer = useContext(PlayContext);
     const spotifyToken = useContext(TokenContext);
 
+    // play whole playlist
     function playContext() {
         const body = {
             context_uri: items.uri
@@ -34,8 +35,8 @@ export default function StretchFrame({ items = {} }) {
         <Container>
             <Link to={`/playlist/${items.id}`}>
                 <div className="poster">
-                    {items.images ? (
-                        <img src={items.images[0].url} alt={`${items.name}-poster`} loading="eager" />
+                    {items.images.length !== 0 ? (
+                        <img src={items.images[0]?.url} alt={`${items.name}-poster`} loading="eager" />
                     ) : (
                         <h3>N/DP</h3>
                     )}

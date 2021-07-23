@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
+import axios from 'axios'
 // components
 import Frame from './frame'
 // context
 import { LoginContext, TokenContext } from '../../utils/context'
 // utils
-import reqWithToken from '../../utils/reqWithToken'
 import getLocale from '../../utils/getLocale'
+import getWithToken from '../../utils/getWithToken'
 // hooks
 import { useDimesions } from "../../hooks/useDimesions"
 // styled-components
@@ -14,20 +15,24 @@ import { Container, SectionWrapper } from './styles/categoryContainerStyles'
 export default function CategoryContainer({ title = "FireyBoi", tag, id, children }) {
     const auth = useContext(LoginContext);
     const spotifyToken = useContext(TokenContext);
-
     const [playlists, setPlaylists] = useState([]);
     const { items: tracks } = playlists;
-    const [sectionsRef, dimensions] = useDimesions();
 
+    const [sectionsRef, dimensions] = useDimesions();
     const [, country] = getLocale();
 
     useEffect(() => {
+        const cancelSource = axios.CancelToken.source();
+        // get playlists of a category
         if (auth) {
-            const getPlaylists = async () => {
-                const categoryPlaylists = reqWithToken(`https://api.spotify.com/v1/browse/categories/${id}/playlists?country=${country}&limit=8`, spotifyToken);
+            async function getPlaylists() {
                 try {
-                    const { data: { playlists } } = await categoryPlaylists();
-                    setPlaylists(playlists);
+                    const categoryPlaylists = getWithToken(`https://api.spotify.com/v1/browse/categories/${id}/playlists?country=${country}&limit=8`, spotifyToken, cancelSource);
+                    const response = await categoryPlaylists();
+                    if (typeof response !== 'undefined' && response.status === 200) {
+                        let { playlists } = response.data;
+                        setPlaylists(playlists);
+                    }
                 } catch (error) {
                     console.log(error)
                 }
@@ -36,6 +41,7 @@ export default function CategoryContainer({ title = "FireyBoi", tag, id, childre
             getPlaylists();
         }
 
+        return _ => cancelSource.cancel();
     }, [auth, spotifyToken, id, country])
 
     return children ? (

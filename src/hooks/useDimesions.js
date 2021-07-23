@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
+// spare time time after resizing to re-initiate
 function debounce(fn, ms) {
     let timer;
     return _ => {
@@ -14,7 +15,6 @@ function debounce(fn, ms) {
 export const useDimesions = () => {
     const ref = useRef(null);
     const [dimensions, setDimensions] = useState({});
-
     useEffect(() => {
         if (ref.current) {
             setDimensions({

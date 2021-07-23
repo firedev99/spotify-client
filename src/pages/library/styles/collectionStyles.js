@@ -11,6 +11,9 @@ export const FrameWrapper = styled.div`
     display: grid;
     column-gap: 24px;
     row-gap: 16px;
+    h4 {
+        width: 300px;
+    }
 `;
 
 export const Container = styled.div`

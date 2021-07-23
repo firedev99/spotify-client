@@ -1,19 +1,21 @@
 import React, { useContext } from 'react'
+import { NavLink } from 'react-router-dom'
 // components
 import Frame from '../../components/props/frame'
 import Header from '../../components/header'
 // utils
+import { PlaylistContext } from '../../utils/context'
+// hooks
 import { useDimesions } from '../../hooks/useDimesions'
 // styled components
 import { Wrapper, Container, FrameWrapper, LibraryNav } from "./styles/collectionStyles"
-import { PlaylistContext } from '../../utils/context'
-import { NavLink } from 'react-router-dom'
+import SpotifyLoader from '../../components/props/loader'
 
 export default function CollectionPlaylists() {
     const { items } = useContext(PlaylistContext);
     const [playlistsRef, dimensions] = useDimesions();
 
-    return (
+    return typeof items === "undefined" ? <SpotifyLoader /> : (
         <Wrapper>
             <Header />
             <Container>
@@ -35,7 +37,7 @@ export default function CollectionPlaylists() {
                             key={`library-playlist-${playlist.id}`}
                             type="playlist"
                             id={playlist.id}
-                            cover={playlist.images[0].url}
+                            cover={playlist.images[0]?.url}
                             name={playlist.name}
                             description={playlist.description ? playlist.description : `by ${playlist.owner.display_name}`}
                             uri={playlist.uri}

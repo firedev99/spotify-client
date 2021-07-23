@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
+// utils
+import { PlayContext, StatusContext, TokenContext, TrackContext } from '../../utils/context'
+import { minutesAndSeconds } from "../../utils/getTime"
+import updateWithToken from '../../utils/updateWithToken'
 // icons
 import { ClockIcon, PauseIcon, PlayIcon } from '../../helpers/icons'
-// utils
-import { minutesAndSeconds } from "../../utils/getTime"
-import { PlayContext, TokenContext, TrackContext } from '../../utils/context'
-import updateWithToken from '../../utils/updateWithToken'
 // styled-components
 import { Wrapper } from './styles/trackListStyles'
 
@@ -12,16 +12,19 @@ export default function TrackList({ songs, uri, type = "playlist" }) {
     const spotifyToken = useContext(TokenContext);
     const updatePlayer = useContext(PlayContext);
     const { currentTrack } = useContext(TrackContext);
+    const setFlash = useContext(StatusContext);
 
     const isPlaying = currentTrack && currentTrack.play === true;
 
     const playTrack = (track_uri) => {
         // if no uri is given e.g liked page 
         const notExits = songs.filter(item => item.uri === track_uri);
+        // playlist, album
         const body = {
             context_uri: uri ? uri : notExits[0].album_uri,
             offset: { uri: track_uri }
         }
+        // artist
         const artistTypeBody = {
             uris: [track_uri]
         }
@@ -33,7 +36,7 @@ export default function TrackList({ songs, uri, type = "playlist" }) {
             if (response.status === 204) {
                 setTimeout(() => updatePlayer(), 200);
             } else {
-                console.log('Something happend.');
+                setFlash('Opps, something went wrong!');
             }
         };
         requestMusic();
@@ -46,7 +49,7 @@ export default function TrackList({ songs, uri, type = "playlist" }) {
                 <li className={type === 'single' ? `single` : ``}>
                     <span>#</span>
                     <span>Title</span>
-                    {type !== 'single' && <span>Album</span>}
+                    {type !== 'single' && <span className="albumm">Album</span>}
                     <span className="duration">
                         <ClockIcon />
                     </span>

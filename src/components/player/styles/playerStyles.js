@@ -9,7 +9,6 @@ export const Wrapper = styled.footer`
 export const Container = styled.div`
     height: 90px;
     width: 100%;
-    min-width: 620px;
     padding: 12px 16px;
     background: #181818;
     border-top: 1px solid #282828;
@@ -81,9 +80,20 @@ export const AudioPlayer = styled.div`
             }
         }
     }
+
+    @media(max-width: 800px) {
+            width: 64px;
+            .player_shuffle, .player_repeat, .player_next, .player_previous {
+                display: none;
+            }
+    }
 `;
 export const PlayerControl = styled.div`
     width: 25%;
     min-width: 200px;
     height: 100%;
+    
+    @media (max-width: 800px) {
+            display: none;
+        }
 `;

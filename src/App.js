@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Route } from "react-router-dom";
-import axios from "axios";
+import React, { useState, useEffect } from "react"
+import { Route } from "react-router-dom"
+import axios from "axios"
 // pages
-import { HomePage, SearchPage } from "./pages";
+import { HomePage, SearchPage } from "./pages"
 // library-pages
 import { CollectionTracks, CollectionPlaylists, CollectionArtists, CollectionAlbums } from "./pages/library"
 // templates
-import { AlbumTemplate, ArtistTemplate, PlaylistTemplate } from './templates'
+import { AlbumTemplate, ArtistTemplate, GenreTemplate, PlaylistTemplate } from './templates'
 // components
-import Layout from "./components/layout";
+import Layout from "./components/layout"
 // utils
-import getHashParams from "./utils/getHashParams";
-import reqWithToken from "./utils/reqWithToken";
-// context
-import { LoginContext, TokenContext, UserContext, PlaylistContext } from "./utils/context";
+import getHashParams from "./utils/getHashParams"
+import getWithToken from "./utils/getWithToken"
+import { LoginContext, TokenContext, UserContext, PlaylistContext } from "./utils/context"
 
 function App() {
-  const [loading, setLoading] = useState(true)
   const [spotifyToken, setSpotifyToken] = useState(null);
   const [auth, setAuth] = useState(false);
   const [userInfo, setUserInfo] = useState({});
@@ -24,9 +22,8 @@ function App() {
 
   useEffect(() => {
     const { accessToken, error } = getHashParams(window && window.location.hash);
-
+    const cancelSource = axios.CancelToken.source();
     if (error) {
-      setLoading(false);
       console.log(error);
     } else {
       if (accessToken) {
@@ -34,14 +31,16 @@ function App() {
         setAuth(true);
         window.location.hash = '';
 
-        const makeRequest = async () => {
-          const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', accessToken);
-          const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', accessToken);
+        async function makeRequest() {
+          const reqUserInfo = getWithToken('https://api.spotify.com/v1/me', accessToken, cancelSource);
+          const reqUserPlaylists = getWithToken('https://api.spotify.com/v1/me/playlists', accessToken, cancelSource);
           try {
             const [_userInfo, _userPlaylists] = await Promise.all([reqUserInfo(), reqUserPlaylists()]);
-            setUserInfo(_userInfo.data);
-            console.log(_userInfo.data)
-            setPlaylists(_userPlaylists.data)
+            // handle axios token cancellation
+            if (typeof _userInfo !== 'undefined' && typeof _userPlaylists !== 'undefined') {
+              setUserInfo(_userInfo.data);
+              setPlaylists(_userPlaylists.data)
+            }
           } catch (error) {
             console.log(error);
           }
@@ -51,20 +50,22 @@ function App() {
       } else {
         // If there is no such hash param check for the refresh token in the cookie
         // Make axios send cookies in the below request automatically with credentials parameter
-        const refreshedToken = async () => {
+        async function refreshedToken() {
           const { data: { access_token } } = await axios.get(`${process.env.REACT_APP_BACK_URI}/refresh_token`, { withCredentials: true })
           setSpotifyToken(access_token);
           setAuth(true);
 
           const makeRequest = async () => {
-            const reqUserInfo = reqWithToken('https://api.spotify.com/v1/me', access_token);
-            const reqUserPlaylists = reqWithToken('https://api.spotify.com/v1/me/playlists', access_token)
+            const reqUserInfo = getWithToken('https://api.spotify.com/v1/me', access_token, cancelSource);
+            const reqUserPlaylists = getWithToken('https://api.spotify.com/v1/me/playlists', access_token, cancelSource);
 
             try {
               const [_userInfo, _userPlaylists] = await Promise.all([reqUserInfo(), reqUserPlaylists()]);
-
-              setUserInfo(_userInfo.data);
-              setPlaylists(_userPlaylists.data)
+              // handle axios token
+              if (typeof _userInfo !== 'undefined' && typeof _userPlaylists !== 'undefined') {
+                setUserInfo(_userInfo.data);
+                setPlaylists(_userPlaylists.data)
+              }
             } catch (error) {
               console.log(error);
             }
@@ -77,6 +78,8 @@ function App() {
       }
 
     }
+
+    return () => cancelSource.cancel();
   }, [auth])
   return (
     <>
@@ -94,6 +97,7 @@ function App() {
                 <Route path="/playlist/:id" component={PlaylistTemplate} />
                 <Route path="/album/:id" component={AlbumTemplate} />
                 <Route path="/artist/:id" component={ArtistTemplate} />
+                <Route path="/genre/:id" component={GenreTemplate} />
               </Layout>
             </PlaylistContext.Provider>
           </UserContext.Provider>
